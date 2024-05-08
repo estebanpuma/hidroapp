@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %} {{ title }} {% endblock %}
+
+{% block content %}
+<div class="col-lg-8 mx-auto">
+    <div class="row text-center">
+        <h1 class="col-1"><a href=""><i class="bi bi-chevron-left"></i></a></h1>
+        <h1 class="col">{{title}}</h1>
+        <h1 class="col-1"></h1>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Rol</th>
+                    <th scope="col">email</th>
+                    <th scope="col">Fecha de nacimiento</th>
+                    <th scope="colgroup" colspan="2">Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Esteban Puma</td>
+                    <td>Operador</td>
+                    <td>estepuma94@gmail.com</td>
+                    <td>22/01/1994</td>
+                    <td>
+                        <button class="btn btn-primary">
+                            <div><i class="bi bi-pencil"></i></div>
+                            <div><small>Editar</small></div>
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <div><i class="bi bi-x-lg"></i></div>
+                            <div><small>Borrar</small></div>
+                        </button>
+                        {% include "__delete_modal.html" %} 
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+    
+{% endblock %}

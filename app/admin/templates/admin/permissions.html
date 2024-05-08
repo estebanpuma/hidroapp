@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<div class="row text-center">
+    <h1 class="col-1">
+        <a href="{{ url_for('admin.admin_dashboard')}}">
+            <i class="bi bi-chevron-left"></i>
+        </a>
+    </h1>
+    <h1 class="col text-primary-emphasis">{{ title }}</h1>
+    <h1 class="col-1"></h1>
+
+</div>
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-7">
+        <div class="row mb-3">
+            <label for="staticRole" class="col-sm-2 col-form-label">Cargo</label>
+            <div class="col-sm-10">
+                <input type="text" disabled readonly class="form-control" id="staticRole" value="Operador">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="staticModule" class="col-sm-2 col-form-label">Modulo</label>
+            <div class="col-sm-10">
+                <input type="text" disabled readonly class="form-control" id="staticModule" value="Ambiente">
+            </div>
+        </div>
+        <hr>
+        <form action="" method="post" >
+            <div class="mb-3">
+                Seleccionar los permisos
+            </div>
+            <div class="mb-3">
+                <div class="form-check mb-2">
+                    <label class="form-check-label" for="read">
+                        Leer
+                    </label>
+                    <input type="checkbox" name="read" id="read" class="form-check-input" checked>
+                </div>
+                <div class="form-check mb-2">
+                    <label class="form-check-label" for="write">
+                        Escribir
+                    </label>
+                    <input type="checkbox" name="write" id="write" class="form-check-input" >
+                </div>
+                <div class="form-check mb-2">
+                    <label class="form-check-label" for="delete">
+                        Borrar
+                    </label>
+                    <input type="checkbox" name="delete" id="delete" class="form-check-input" >
+                </div>
+                
+            </div>
+            <div class="d-grid col-lg-6 mx-auto">
+                <button class="btn btn-primary" type="submit">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    
+
+    
+    
+
+{% endblock %}

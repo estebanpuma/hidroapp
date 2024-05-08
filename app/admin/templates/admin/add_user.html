@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{%  block title %} {{ title }} {% endblock %}
+
+{% block content %}
+<div class="g-2 row text-center col-lg-8 mx-auto">
+    <h1 class="col-1"><a href="" class=""><i class="bi bi-chevron-left"></i></a> </h1>
+    <h1 class="col text-primary-emphasis">{{ title }}</h1>
+    <h1 class="col-1"></h1>
+</div>
+<div class="justify-content-center row mt-5">
+    
+    
+    <div class="col-lg-6 border shadow-sm rounded">
+        <form action="" method="post" class="p-2">
+            <div class="mb-3 pb-1">
+                <h2>Registrar datos</h2>
+                <p>Ingresa los datos del nuevo usuario</p>
+                <hr >
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Rol</label>
+                <select class="form-select" id="role" name="role" required>
+                    <option value="" selected>Selecciona un rol</option>
+                    <option value="1">Operador</option>
+                    <option value="2">Ayudante de operación</option>
+                    <option value="3">Monitor/a ambiental</option>
+                    <option value="4">Comunicador/a social</option>
+                    <option value="5">Jefe sso y ma</option>
+                    <option value="6">Gerente General</option>
+                    <option value="7">Admin</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="date" class="form-label">Fecha de nacimiento</label>
+                <input type="date" class="form-control" id="date" required>
+            </div>
+            <div class="d-grid col-md-6 mx-auto mb-3 pt-5">
+                <button type="submit" class="btn btn-primary">Registrar</button>
+            </div>
+        </form>
+    </div>
+</div>
+    
+{% endblock %}
