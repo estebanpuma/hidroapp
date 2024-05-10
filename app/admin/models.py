@@ -1,15 +1,28 @@
 from flask_login import UserMixin
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db 
 
 
 class BaseModel():
-    def save(self):
-        if not self.id:
-            db.session.add(self)
-        db.session.commit()
-        
+    def save(self, db_session=db.session):
+        try:
+            if not self.id:
+                db_session.add(self)
+                db_session.commit()
+        except SQLAlchemyError as e:
+            db_session.rollback()
+            print(f"Error occurred while saving: {e}")
 
+    def delete(self, db_session=db.session):
+        try:
+            if self.id:
+                db_session.delete(self)
+                db_session.commit()
+        except SQLAlchemyError as e:
+            db_session.rollback()
+            print(f"Error occurred while deleting: {e}")
+            
 class User(db.Model, UserMixin, BaseModel):
     
     __tablename__ = "app_users"
@@ -19,7 +32,7 @@ class User(db.Model, UserMixin, BaseModel):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     role = db.Column(db.String, nullable=False)
-    birthday = db.Column(db.Date)
+    birth = db.Column(db.Date)
     
     def __repr__(self):
         return self.name
@@ -36,4 +49,7 @@ class User(db.Model, UserMixin, BaseModel):
     
     @staticmethod
     def get_by_email(email):
-        return User.query.filter_by(email == email).first()
+        query = User.query.filter_by(email = email).first()
+        return query or None
+    
+ # Creación de un usuario por defecto

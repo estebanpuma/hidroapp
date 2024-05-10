@@ -10,7 +10,8 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-danger">Eliminar</button>
+          <a href="{{url_for('admin.delete', user_id)}}"><button type="button" class="btn btn-danger" >Eliminar</button></a>
+          
         </div>
       </div>
     </div>

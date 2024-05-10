@@ -4,33 +4,43 @@ from .models import User
 from .forms import LoginForm, AddUserForm
 from . import admin_bp
 
+from datetime import datetime
+
 @admin_bp.route("/users")
 def users():
+    users = User.query.all()
+    print(users)
     title = "Usuarios"
     return render_template("admin/users.html",
-                           title = title)
+                           title = title,
+                           users = users)
     
     
 @admin_bp.route("/add_user/<int:user_id>/", methods=["GET", "POST"])
 @admin_bp.route("/add_user", methods=["GET", "POST"])
 def add_user(user_id=None):
     title = "Nuevo Usuario"
-    form = AddUserForm()
     
-    if form.validate_on_submit():
+    error = None
+    
+    if request.method == "POST":
+        name = request.form['name']
+        email = request.form["email"]
+        password = request.form["password"]
+        role = request.form["role"]
+        birth = request.form["birth"]
         
-        name = form.name.data
-        email = form.email.data
-        password = form.password.data
-        role = form.role.data
-        birth = form.birth.data
+        birth = datetime.strptime(birth, '%Y-%m-%d').date()
         
         user = User.get_by_email(email)
+        
+        print(name,email,role, password)
         
         if user is not None:
             error = f'El email {email} ya esta en uso'
             
         else:
+            
             n_user = User(name=name, 
                           email=email,
                           role = role,
@@ -41,6 +51,7 @@ def add_user(user_id=None):
             login_user(n_user)
             
             next_page = request.args.get('next', None)
+            print(f"n user: {n_user}")
             if not next_page:
                 next_page = url_for("admin.users")
             
@@ -81,3 +92,26 @@ def permissions(role_id=None, module_id=None):
     title = "Permisos"
     return render_template("admin/permissions.html",
                            title=title)
+    
+
+@admin_bp.route("/delete_user/<int:user_id>", methods=["GET", "POST"])
+def delete_user(user_id):
+    user = User.get_by_id(user_id)
+    if user:
+        user.delete()
+    
+    return redirect(url_for("admin.users"))
+    
+    
+
+@admin_bp.before_app_request 
+def create_default_user():
+    admin_user = User.query.filter_by(id=0).first()
+    if not admin_user:
+        # Si el usuario admin no existe, lo creamos
+        
+        admin_email = "admin@admin.com"
+        admin_role = "0"
+        admin_user = User(id=0, name='admin', email = admin_email, role=admin_role)
+        admin_user.set_password("admin")
+        admin_user.save()

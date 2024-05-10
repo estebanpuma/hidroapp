@@ -12,7 +12,8 @@
     
     
     <div class="col-lg-6 border shadow-sm rounded">
-        <form action="" method="post" class="p-2">
+        <form action="" method="post" class="p-2" >
+            
             <div class="mb-3 pb-1">
                 <h2>Registrar datos</h2>
                 <p>Ingresa los datos del nuevo usuario</p>
@@ -20,15 +21,15 @@
             </div>
             <div class="mb-3">
                 <label for="name" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="name" required>
+                <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" required>
+                <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
-                <input type="password" class="form-control" id="password" required>
+                <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <div class="mb-3">
                 <label for="role" class="form-label">Rol</label>
@@ -45,10 +46,10 @@
             </div>
             <div class="mb-3">
                 <label for="date" class="form-label">Fecha de nacimiento</label>
-                <input type="date" class="form-control" id="birth" required>
+                <input type="date" class="form-control" id="birth" name="birth" required>
             </div>
             <div class="d-grid col-md-6 mx-auto mb-3 pt-5">
-                <button type="submit" class="btn btn-primary">Registrar</button>
+                <button id="submit"  type="submit" class="btn btn-primary">Registrar</button>
             </div>
         </form>
     </div>

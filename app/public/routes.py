@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for
+from flask import render_template, redirect, url_for, request
 from flask_login import login_user, logout_user
 from app import login_manager
 from ..admin.models import User
@@ -11,22 +11,28 @@ def index():
     return render_template("public/index.html",
                            title = title)
     
+
     
-@public_bp.route("/login")
+@public_bp.route("/login", methods = ["POST", "GET"])
 def login():
     title = "Login"
     
-    form = LoginForm()
-    
-    if form.validate_on_submit():
-        email = form.email.data
-        password = form.password.data
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
         
         user = User.get_by_email(email)
         
         if user is not None and user.check_password(password):
             login_user(user)
-    
+            
+            next_page = request.args.get('next', None)
+            
+            if not next_page:
+                next_page = url_for("admin.users")
+            
+            return redirect(next_page)
+        
     return render_template("public/login.html", 
                            title = title)
     
@@ -35,7 +41,7 @@ def login():
 @public_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('public.index'))
 
 
 @login_manager.user_loader
