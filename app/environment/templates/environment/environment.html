@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+<a href="{{ url_for('pma.pma')}}">
+    <button class="btn btn-primary">PMA</button>
+</a>
+{% endblock %}

@@ -18,13 +18,15 @@
         <div class="row mb-3">
             <label for="staticRole" class="col-sm-2 col-form-label">Cargo</label>
             <div class="col-sm-10">
-                <input type="text" disabled readonly class="form-control" id="staticRole" value="Operador">
+                <span>{{role.name}}	</span>
+                
+                <input type="text" disabled readonly class="form-control" id="staticRole" name="role" value="{{role.name}}">
             </div>
         </div>
         <div class="row mb-3">
             <label for="staticModule" class="col-sm-2 col-form-label">Modulo</label>
             <div class="col-sm-10">
-                <input type="text" disabled readonly class="form-control" id="staticModule" value="Ambiente">
+                <input type="text" disabled readonly class="form-control" id="staticModule" name="module" value="{{module.name}}">
             </div>
         </div>
         <hr>
@@ -35,21 +37,21 @@
             <div class="mb-3">
                 <div class="form-check mb-2">
                     <label class="form-check-label" for="read">
-                        Leer
+                        Leer {{rp.read}}
                     </label>
-                    <input type="checkbox" name="read" id="read" class="form-check-input" checked>
+                    <input type="checkbox" name="read" id="read" class="form-check-input" {% if rp.read %}checked{% endif %}>
                 </div>
                 <div class="form-check mb-2">
                     <label class="form-check-label" for="write">
                         Escribir
                     </label>
-                    <input type="checkbox" name="write" id="write" class="form-check-input" >
+                    <input type="checkbox" name="write" id="write" class="form-check-input" {% if rp.write %}checked{% endif %}>
                 </div>
                 <div class="form-check mb-2">
-                    <label class="form-check-label" for="delete">
+                    <label class="form-check-label" for="del">
                         Borrar
                     </label>
-                    <input type="checkbox" name="delete" id="delete" class="form-check-input" >
+                    <input type="checkbox" name="del" id="del" class="form-check-input" {% if rp.erase %}checked{% endif %}>
                 </div>
                 
             </div>

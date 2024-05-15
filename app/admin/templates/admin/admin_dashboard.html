@@ -3,78 +3,105 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-<div class="row text-center col-lg-8 mx-auto">
-    <h1 class="col-1"><a href="{{ url_for('public.index')}}">
-        <i class="bi bi-chevron-left"></i>
-    </a></h1>
-    <h1 class="col">{{ title }}</h1>
-    <h1 class="col-1"></h1>
-</div>
-<div class="col-lg-8 mx-auto">
+<div class="col-lg-10 mx-auto ">
+
+
+    <div class="row text-center mx-auto">
+        <h1 class="col-1"><a href="{{ url_for('public.index')}}">
+            <i class="bi bi-chevron-left"></i>
+        </a></h1>
+        <h1 class="col">{{ title }}</h1>
+        <h1 class="col-1"></h1>
+    </div>
+
     <div class="p-3">
         <div class="row">
             <div class="col">Usuarios:</div>
-            <div class="col">5</div>
+            <div class="col">{{users | length}}</div>
         </div>
         <div class="row">
             <div class="col">Roles:</div>
-            <div class="col">5</div>
+            <div class="col">{{roles | length}}</div>
         </div>
     </div>
     
-    <div>
 
-        <div class="p-3"></div>
+    <div class="p-3"></div>
+
+
+    
+    
+   
 
  
-        
-
-        <div class="row border p-2 shadow rounded mb-3">
-            
-            <div class="col-md-3">
-                Operador
+    <div class=""></div>   
+    {% for role in roles %}
+        <div class="row border p-2 shadow rounded mb-3">        
+            <div class="col-md-2">
+                {{role.name}}                
             </div>
-            <div class="col row">
-                <div class="col-md-4 border rounded mx-1 mb-3 ">
-                    <div class="row p-2">
-                        <div class="col-6">Medio Ambiente</div>
-                        <div class="col-6"> <a href=""><button class="btn btn-primary" >Editar</button></a></div>
-                    </div>
-                    <hr>
-                    <div class="row container-fluid">
-                        <div class="col-6">
-                            <p>Lectura</p>
-                        </div> 
-                        <div class="col-6">
-                            <span class="badge rounded-pill text-bg-success">Permitido</span>
+            <div class="col row ">
+                {% for mod in modules %}
+                <div class="col-md-auto">
+                    <div class="border rounded mx-1 mb-3">
+                        <div class="p-2">
+                            <div class="p-2">{{mod.name}}</div>
+                            <div class=""> 
+                                <a href="{{url_for('admin.permissions', role_id = role.id, module_id = mod.id)}}">
+                                    <div class="d-grid gap-2 ">        
+                                        <button class="btn btn-primary" type="button">Editar</button>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row container-fluid">
-                        <div class="col-6">
-                            <p>Escritura</p>
-                        </div> 
-                        <div class="col-6">
-                            <span class="badge rounded-pill text-bg-success">Permitido</span>
+                        <hr>
+                        <div class="row container-fluid">
+                            <div class="col-6 container-fluid">
+                                Lectura
+                            </div> 
+                            <div class="col-6">
+                                {% if role.get_permissions_by_mod(role.id, mod.id).read == True %}
+                                <span class="badge rounded-pill text-bg-success"><small>Permitido</small></span>
+                                {% else %}
+                                <span class="badge rounded-pill text-bg-danger"><small>Denegado</small></span>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>
-                    <div class="row container-fluid">
-                        <div class="col-6">
-                            <p>Borrar</p>
-                        </div> 
-                        <div class="col-6">
-                            <span class="badge rounded-pill text-bg-danger">Denegado</span>
+                        <div class="row container-fluid">
+                            <div class="col-6">
+                                Escritura
+                            </div> 
+                            <div class="col-6">
+                                {% if role.get_permissions_by_mod(role.id, mod.id).write == True %}
+                                <span class="badge rounded-pill text-bg-success"><small>Permitido</small></span>
+                                {% else %}
+                                <span class="badge rounded-pill text-bg-danger"><small>Denegado</small></span>
+                                {% endif %}
+                            </div>
                         </div>
-                    </div>   
+                        <div class="row container-fluid">
+                            <div class="col-6">
+                                Borrar 
+                                
+                            </div> 
+                            <div class="col-6">
+                                {% if role.get_permissions_by_mod(role.id, mod.id).erase == True %}
+                                <span class="badge rounded-pill text-bg-success"><small>Permitido</small> {{role.permissions.delete}}</span>
+                                {% else %}
+                                <span class="badge rounded-pill text-bg-danger"><small>Denegado</small></span>
+                                {% endif %}
+                            </div>
+                        </div>   
+                    </div>
+
                 </div>
+                    
+                {% endfor %}
     
-    
-               
             </div>
-            
-                                                                    
-
         </div>
-    </div>
+    {% endfor %}
     
+
 </div>
 {% endblock %}

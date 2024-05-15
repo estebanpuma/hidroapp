@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+
+    <div class="col-lg-7">
+        <div class="row">
+            <h1 class="col-1">
+                <i class="bi bi-chevron"></i>
+            </h1>
+            <h1>{{title}}</h1>
+            <h1 class="col-1"></h1>
+        </div>
+        <div>
+            <a href="{{url_for('admin.delete_role_perm')}}">
+                <button class="btn btn-danger">Borrar todo</button>
+            </a>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>role_id</th>
+                        <th>mod_id</th>
+                        <th>read</th>
+                        <th>write</th>
+                        <th>erase</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in perms %}
+                    <tr>
+                        <td>{{p.id}}</td>
+                        <td>{{p.role_id}}</td>
+                        <td>{{p.module_id}}</td>
+                        <td>{{p.read}}</td>
+                        <td>{{p.write}}</td>
+                        <td>{{p.erase}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

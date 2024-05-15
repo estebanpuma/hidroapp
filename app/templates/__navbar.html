@@ -29,14 +29,16 @@
                     
                     <ul class="dropdown-menu dropdown-menu-end">
                         {% if current_user.is_authenticated %}
+                            <li> {{ current_user.name }} </li>
                             <li><a href="" class="dropdow-item">Perfil</a></li>
-                            {% if current_user.id == 0 %}
+                            {% if current_user.name == "admin" %}
                                 <li><a href="{{ url_for('admin.admin_dashboard') }}">Dashboard</a></li>
                                 <li><a href="{{ url_for('admin.roles') }}">Roles</a></li>
-                                <li><a href="{{ url_for('admin.users') }}">Dashboard</a></li>
+                                <li><a href="{{ url_for('admin.users') }}">Usuarios</a></li>
                             {% endif %}
+                            <li><a href="{{url_for('auth.logout')}}">Logout</a></li>
                         {% else %}
-                            <li><a class="dropdown-item" href="{{url_for('public.login')}}">Login</a></li>
+                            <li><a class="dropdown-item" href="{{url_for('auth.login')}}">Login</a></li>
                         {% endif %}
                     </ul>
                 </div>

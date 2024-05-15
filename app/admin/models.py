@@ -5,22 +5,28 @@ from app import db
 
 
 class BaseModel():
-    def save(self, db_session=db.session):
+    def save(self):
+        print(f"metdo save llamado, self:{self} ")
         try:
-            if not self.id:
-                db_session.add(self)
-                db_session.commit()
+            print("intentando guardar")
+            db.session.add(self)
+            db.session.commit()
+            print(f"in method save: {self}")            
+            
+                
         except SQLAlchemyError as e:
-            db_session.rollback()
+            db.session.rollback()
             print(f"Error occurred while saving: {e}")
 
-    def delete(self, db_session=db.session):
+    def delete(self):
+        print(f"intentando borrar {self}, {self.id}, ")
         try:
-            if self.id:
-                db_session.delete(self)
-                db_session.commit()
+            if self is not None:
+                print(f"encontro id {self}")
+                db.session.delete(self)
+                db.session.commit()
         except SQLAlchemyError as e:
-            db_session.rollback()
+            db.session.rollback()
             print(f"Error occurred while deleting: {e}")
             
 class User(db.Model, UserMixin, BaseModel):
@@ -31,8 +37,9 @@ class User(db.Model, UserMixin, BaseModel):
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
-    role = db.Column(db.String, nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), default=1)
     birth = db.Column(db.Date)
+    role = db.relationship("Role")
     
     def __repr__(self):
         return self.name
@@ -42,7 +49,7 @@ class User(db.Model, UserMixin, BaseModel):
         
     def check_password(self, password):
         return check_password_hash(self.password, password)
-    
+        
     @staticmethod
     def get_by_id(id):
         return User.query.get(id)
@@ -52,4 +59,65 @@ class User(db.Model, UserMixin, BaseModel):
         query = User.query.filter_by(email = email).first()
         return query or None
     
- # Creación de un usuario por defecto
+
+class Role(db.Model, BaseModel):
+    
+    __tablename__ = "roles"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+    permissions = db.relationship("RolePermission")
+    
+    def __repr__(self):
+        return self.name
+    
+    
+    def get_permissions_by_mod(self, role_id, mod_id):
+        perm = RolePermission.query.filter_by(role_id=role_id, module_id=mod_id).first()
+        
+        return perm
+    
+    @staticmethod
+    def get_by_id(id):
+        return Role.query.get(id)
+    
+
+class Module(db.Model, BaseModel):
+    
+    __tablename__ = "modules"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    description = db.Column(db.String)
+    
+     
+    def __repr__(self):
+        return self.name 
+     
+    @staticmethod
+    def get_by_id(id):
+        return Module.query.get(id)
+    
+    
+class RolePermission(db.Model, BaseModel):
+    
+    __tablename__ = "role_permissions"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    role_id = db.Column(db.Integer, db.ForeignKey("roles.id", ondelete="CASCADE"))
+    module_id = db.Column(db.Integer, db.ForeignKey("modules.id", ondelete="CASCADE"))
+    read = db.Column(db.Boolean, default=True)
+    write = db.Column(db.Boolean, default=False)
+    erase = db.Column(db.Boolean, default=False)
+    module = db.relationship("Module")
+    
+    def __repr__(self):
+        return f"Modulo: {self.id}, read:{self.read}, write:{self.write}, delete:{self.erase}" 
+     
+    def set_permissions(self, read=True, write=False, erase=False):
+        print("llada a setpermission")
+        self.read = read
+        self.write = write
+        self.erase = erase
+    

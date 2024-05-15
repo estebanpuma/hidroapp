@@ -5,7 +5,7 @@
 {% block content %}
 <div class="col-lg-8 mx-auto">
     <div class="row text-center">
-        <h1 class="col-1"><a href=""><i class="bi bi-chevron-left"></i></a></h1>
+        <h1 class="col-1"><a href="{{url_for('admin.roles')}}"><i class="bi bi-chevron-left"></i></a></h1>
         <h1 class="col">{{ title }}</h1>
         <h1 class="col-1"></h1>
     </div>
@@ -19,13 +19,13 @@
                 
                 <div class="mb-3">
                     <label for="role" class="form-label">Cargo</label>
-                    <input type="text" id="role" class="form-control">
+                    <input type="text" id="role" name="role"  class="form-control" value="{{role.name}}" required>
                 </div>
             
            
                 <div class="mb-3">
                     <label for="description" class="form-label">Descripción</label>
-                    <input type="text-field" id="description" class="form-control">
+                    <input type="text-field" id="description" name="description" value="{{role.description}}" class="form-control">
                 </div>
 
                 <div class="mb-3">

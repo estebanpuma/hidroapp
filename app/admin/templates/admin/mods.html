@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+
+    <div class="col-lg-7">
+        <div class="row">
+            <h1 class="col-1">
+                <i class="bi bi-chevron"></i>
+            </h1>
+            <h1>{{title}}</h1>
+            <h1 class="col-1"></h1>
+        </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th>Name</th>
+                        <th>Descripción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for mod in mods %}
+                    <tr>
+                        <td>{{mod.id}}</td>
+                        <td>{{mod.name}}</td>
+                        <td>{{mod.description}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

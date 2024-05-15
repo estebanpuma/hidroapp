@@ -17,6 +17,9 @@ def create_app(config):
     db.init_app(app)
     migrate.init_app(app, db)
     
+    from .auth import auth_bp
+    app.register_blueprint(auth_bp)
+    
     from .admin import admin_bp
     app.register_blueprint(admin_bp)
     
@@ -25,5 +28,14 @@ def create_app(config):
     
     from .users import users_bp
     app.register_blueprint(users_bp)
+    
+    from .environment import environment_bp
+    app.register_blueprint(environment_bp)
+    
+    from .environment.pma import environment_pma_bp
+    app.register_blueprint(environment_pma_bp, url_prefix="/pma")
+    
+    from .environment.reforestation import environment_reforestation_bp
+    app.register_blueprint(environment_reforestation_bp, url_prefix="/reforestation")
     
     return app

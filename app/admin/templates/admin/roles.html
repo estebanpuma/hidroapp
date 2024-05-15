@@ -9,34 +9,49 @@
         <h1 class="col">{{ title }}</h1>
         <h1 class="col-1"></h1>
     </div>
+    <div>
+        <a href="{{url_for('admin.add_role')}}">
+            <button class="btn btn-primary"><i class="bi bi-plus-circle">Añadir rol</i></button>
+        </a>
+    </div>
     <div class="table-responsive">
         <table class="table">
             <thead>
                 <tr>
+                    <th>Id</th>
                     <th scope="col">Rol</th>
                     <th scope="col">Descripción</th>
                     <th scope="col" colspan="2">Acción</th>
                 </tr>
             </thead>
             <tbody>
+                {% for role in roles %}
                 <tr>
-                    <td>Operador</td>
-                    <td>Opera las maquinas y se encarga de basicamente todo</td>
+                    <td>{{role.id}}</td>
+                    <td>{{role.name}}</td>
+                    <td>{{role.description}}</td>
                     <td>
+                        <a href="{{url_for('admin.add_role', role_id=role.id)}}">
                         <button class="btn btn-primary" type="button" >
                             <div><i class="bi bi-pencil"></i></div>
                             <div><small>Editar</small></div>
                         </button>
+                        </a>
                     </td>
                     <td>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{role.id}}">
                             <div><i class="bi bi-x-lg"></i></div>
                             <div><small>Borrar</small></div>
                         </button>
+                        {% set modal_id = role.id %}
+                        {% set delete_url = url_for('admin.delete_role', role_id=role.id) %}
+                        {% include "__delete_modal.html"%}
+
                         
-                        {% include "__delete_modal.html" %} 
                     </td>
                 </tr>
+                {% endfor %}
+                
             </tbody>
         </table>
         
