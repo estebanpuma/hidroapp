@@ -4,4 +4,120 @@
 
 {% block content %}
 
+{% set href=url_for('environment.environment')%}
+{% include "__title.html" %}
+
+<div class="py-2 mb-3">
+    <div>
+        <h3>Vivero</h3>
+    </div>
+    <a href="{{ url_for('reforestation.greenhouse')}}" class="text-decoration-none text-dark link-hover">
+        <div class="row rounded border mx-1 align-items-center" >
+            <div class="col-3 px-1 ">
+                <img src="{{url_for('static', filename='/img/greenhouse.svg')}}" alt="greenhouse_img" class="img-fluid">
+                
+                
+            </div>
+            <div class="col px-1">
+                <div>
+                    <b>Vivero Forestal</b>
+                </div>
+                <div>
+                    <p class="lh-sm fs-6">
+                        Todas las plantas empleadas en la reforestación
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="col-1 px-1 fs-3 fw-semibold">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+    </a>     
+</div>
+
+<div class="py-2 mb-3">
+    <div>
+        <h3>Entregas</h3>
+    </div>
+    <a href="{{ url_for('reforestation.plant_exits')}}" class="text-decoration-none text-dark">
+        <div class="row rounded border mx-1 align-items-center" >
+            <div class="col-3 px-1 ">
+                <img src="{{url_for('static', filename='/img/exit_plant.svg')}}" alt="plant_exits_img" class="img-fluid rounded-circle m-2">
+            </div>
+            <div class="col px-1">
+                <div>
+                    <b>Entrega/plantadas</b>
+                </div>
+                <div>
+                    <p class="lh-sm fs-6">
+                        Entrega de plantas para reforestación directa y/o a través de donaciones
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="col-1 px-1 fs-3 fw-semibold">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+    </a>     
+</div>
+
+<div class="py-2 mb-3">
+    <div>
+        <h3>Seguimiento</h3>
+    </div>
+    <a href="{{ url_for('reforestation.plant_tracking')}}" class="text-decoration-none text-dark">
+        <div class="row rounded border mx-1 align-items-center" style="height: 122;" >
+            <div class="col-3 px-1 ">
+                <img src="{{url_for('static', filename='/img/tracking_plant.svg')}}" alt="pma_img" class="img-fluid" style="width: 91;height: 122">
+            </div>
+            <div class="col px-1">
+                <div>
+                    <b>Seguimiento de reforestación</b>
+                </div>
+                <div>
+                    <p class="lh-sm fs-6">
+                        Seguimiento de las plantas entregadas o reforestadas
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="col-1 px-1 fs-3 fw-semibold">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+    </a>     
+</div>
+
+<div class="py-2 mb-3">
+    <div>
+        <h3>Documentos</h3>
+    </div>
+    <a href="{{ url_for('reforestation.docs')}}" class="text-decoration-none text-dark">
+        <div class="row rounded border mx-1 align-items-center" style="height: 122;" >
+            <div class="col-3 px-1 ">
+                <img src="{{url_for('static', filename='/img/docs.svg')}}" alt="pma_img" class="img-fluid" style="width: 91;height: 122">
+            </div>
+            <div class="col px-1">
+                <div>
+                    <b>Documentos reforestación</b>
+                </div>
+                <div>
+                    <p class="lh-sm fs-6">
+                        Documentación de la reforestación, control, vivero,
+                        actas entrega/recepción, control reforestación
+                    </p>
+                    
+                </div>
+            </div>
+            <div class="col-1 px-1 fs-3 fw-semibold">
+                <i class="bi bi-chevron-right"></i>
+            </div>
+        </div>
+    </a>     
+</div>
+
+
+
 {% endblock %}

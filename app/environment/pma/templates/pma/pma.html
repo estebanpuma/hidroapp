@@ -4,4 +4,36 @@
 
 {% block content %}
 
+    {% set href = url_for('environment.environment') %}
+    {% include "__title.html" %}
+
+    <div>
+        <a href="{{url_for('pma.add_pma_activity')}}" class="text-ligth">
+            <button class="btn btn-primary">
+                <i class="bi bi-plus-circle">Nueva actividad</i>
+            </button>
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col"><a href="{{url_for('pma.pma_activities')}}" class="text-decoration-none">Actividad <i class="bi bi-box-arrow-up-right"></i></a></th>
+                    {% for month in months %}
+                    <th scope="col"> {{month.name[0:3]}}</th>
+                    {% endfor %}
+                    <th scope="col">Responsable</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for activity in pma_activities %}
+                <tr>
+                    <td><a href="{{url_for('pma.add_pma_activity', pma_activity_id=activity.id)}}" class="text-decoration-none">{{activity.name}}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
 {% endblock %}

@@ -3,7 +3,95 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-<a href="{{ url_for('pma.pma')}}">
-    <button class="btn btn-primary">PMA</button>
-</a>
+
+
+    {% set href=url_for('public.index')%}
+    {% include "__title.html" %}
+
+    <div class="py-2 mb-3">
+        <div>
+            <h3>Plan de manejo ambiental</h3>
+        </div>
+        <a href="{{ url_for('pma.pma')}}" class="text-decoration-none text-dark link-hover">
+            <div class="row rounded border mx-1 align-items-center" >
+                <div class="col-3 px-1 ">
+                    <img src="{{url_for('static', filename='/img/pma.jpg')}}" alt="pma_img" class="img-fluid">
+                </div>
+                <div class="col px-1">
+                    <div>
+                        <b>Plan de Manejo Ambiental</b>
+                    </div>
+                    <div>
+                        <p class="lh-sm fs-6">
+                            Plan diseñado para reducir el impacto ambiental
+                             en la zona de influencia y construir un mundo mejor
+                        </p>
+                        
+                    </div>
+                </div>
+                <div class="col-1 px-1 fs-3 fw-semibold">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+        </a>     
+    </div>
+   
+    <div class="py-2 mb-3">
+        <div>
+            <h3>Reforestación</h3>
+        </div>
+        <a href="{{ url_for('reforestation.reforestation')}}" class="text-decoration-none text-dark">
+            <div class="row rounded border mx-1 align-items-center" >
+                <div class="col-3 px-1 ">
+                    <img src="{{url_for('static', filename='/img/reforestation.jpg')}}" alt="pma_img" class="img-fluid">
+                </div>
+                <div class="col px-1">
+                    <div>
+                        <b>Reforestación</b>
+                    </div>
+                    <div>
+                        <p class="lh-sm fs-6">
+                            Plantamos especies nativas para proteger las riveras de los ríos, 
+                            proteger las fuentes hídricas y apoyar a la comunidad
+                        </p>
+                        
+                    </div>
+                </div>
+                <div class="col-1 px-1 fs-3 fw-semibold">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+        </a>     
+    </div>
+
+    <div class="py-2 mb-3">
+        <div>
+            <h3>Documentos</h3>
+        </div>
+        <a href="{{ url_for('reforestation.reforestation')}}" class="text-decoration-none text-dark">
+            <div class="row rounded border mx-1 align-items-center" style="height: 122;" >
+                <div class="col-3 px-1 ">
+                    <img src="{{url_for('static', filename='/img/docs.svg')}}" alt="pma_img" class="img-fluid" style="width: 91;height: 122">
+                </div>
+                <div class="col px-1">
+                    <div>
+                        <b>Documentos</b>
+                    </div>
+                    <div>
+                        <p class="lh-sm fs-6">
+                            Documentación, procedimienos e instructivos relacionados con el Plan de manejo ambiental
+                        </p>
+                        
+                    </div>
+                </div>
+                <div class="col-1 px-1 fs-3 fw-semibold">
+                    <i class="bi bi-chevron-right"></i>
+                </div>
+            </div>
+        </a>     
+    </div>
+
+
+
+
 {% endblock %}

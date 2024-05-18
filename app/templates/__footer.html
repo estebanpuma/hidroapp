@@ -1,7 +1,7 @@
 
 
 <nav class="nav nav-pills nav-justified ">
-    <a href="" class="nav-link link-dark">
+    <a href="{{ url_for('public.index') }}" class="nav-link link-dark">
         <div>
             <i class="bi bi-house" style="font-size: 1.5rem;"></i>
             <figcaption class="text-center"><small>Home</small></figcaption>
@@ -25,7 +25,7 @@
             <figcaption class="text-center"><small>SST</small></figcaption>
         </div>
     </a>
-    <a href="" class="nav-link link-dark">
+    <a href="{{ url_for('social.social') }}" class="nav-link link-dark">
         <div>
             <i class="bi bi-people" style="font-size: 1.5rem;"></i>
             <figcaption class="text-center"><small>RSC</small></figcaption>

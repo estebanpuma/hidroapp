@@ -3,5 +3,6 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-
+    {% set href= url_for('reforestation.reforestation') %}
+    {% include "__title.html" %}
 {% endblock %}

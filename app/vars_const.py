@@ -12,5 +12,3 @@ months =  {
     11: "noviembre",
     12: "diciembre"
 }
-
-#Tablas

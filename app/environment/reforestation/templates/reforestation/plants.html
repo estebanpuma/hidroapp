@@ -3,5 +3,32 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
+    {% set href= url_for('reforestation.reforestation') %}
+    {% include "__title.html" %}
 
+    <section>
+        <div>
+            <a href="" class="text-decoration-none text-light">
+                <button>
+                    <i class="bi bi-plus-circle">Planta</i>
+                </button>
+            </a>
+        </div>
+    </section>
+    <section>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col" colspan="2">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 {% endblock %}

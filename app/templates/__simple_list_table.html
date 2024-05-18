@@ -1,0 +1,42 @@
+<div class="table-responsible">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col" colspan="2">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in obj %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.description }}</td>
+                <td>
+                    <a href="{{url_for('{{url_edit}}', community_id=community.id)}}">
+                        <button class="btn btn-primary">
+                            <div>
+                                <i class="bi bi-pencil" ></i>
+                            </div>
+                            <div>
+                                <small>Edit</small>
+                            </div>
+                        </button>
+                    </a>
+                </td>
+                <td>
+                    <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{community.id}}">
+                        <div><i class="bi bi-x-lg"></i></div>
+                        <div><small>Borrar</small></div>
+                    </button>
+                    {% set modal_id = community.id %}
+                    {% set delete_url = url_for('social.delete_community', community_id=community.id) %}
+                    {% include "__delete_modal.html"%}
+                    
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>

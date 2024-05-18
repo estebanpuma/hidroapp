@@ -1,34 +1,10 @@
 from flask_login import UserMixin
-from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db 
+from app.models import BaseModel
 
 
-class BaseModel():
-    def save(self):
-        print(f"metdo save llamado, self:{self} ")
-        try:
-            print("intentando guardar")
-            db.session.add(self)
-            db.session.commit()
-            print(f"in method save: {self}")            
-            
-                
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            print(f"Error occurred while saving: {e}")
 
-    def delete(self):
-        print(f"intentando borrar {self}, {self.id}, ")
-        try:
-            if self is not None:
-                print(f"encontro id {self}")
-                db.session.delete(self)
-                db.session.commit()
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            print(f"Error occurred while deleting: {e}")
-            
 class User(db.Model, UserMixin, BaseModel):
     
     __tablename__ = "app_users"

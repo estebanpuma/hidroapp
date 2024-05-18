@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+
+    {% set href= url_for('social.communities') %}
+    {% include "__title.html" %}
+
+    <a href="{{url_for('social.communities')}}">
+        <button class="btn btn-primary">Comunidades</button>
+    </a>
+
+
+
+        <div class="row justify-content-center mt-5 p-2">
+            <div class=" border shadow rounded p-2">
+
+                <form action="" method="post" class="mx-auto">
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre</label>
+                        <input type="text" id="name" name="name"  class="form-control" value="{{community.name}}" required>
+                    </div>
+                
+            
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea  id="description" name="description" value="{{community.description}}" class="form-control"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-grid col-sm-6 mx-auto">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+
+
+
+{% endblock %}

@@ -18,24 +18,27 @@ def create_app(config):
     migrate.init_app(app, db)
     
     from .auth import auth_bp
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix="/auth")
     
     from .admin import admin_bp
-    app.register_blueprint(admin_bp)
+    app.register_blueprint(admin_bp, url_prefix="/admin")
     
     from .public import public_bp
     app.register_blueprint(public_bp)
     
     from .users import users_bp
-    app.register_blueprint(users_bp)
+    app.register_blueprint(users_bp, url_prefix="/users")
     
     from .environment import environment_bp
-    app.register_blueprint(environment_bp)
+    app.register_blueprint(environment_bp, url_prefix="/environment")
     
     from .environment.pma import environment_pma_bp
-    app.register_blueprint(environment_pma_bp, url_prefix="/pma")
+    app.register_blueprint(environment_pma_bp, url_prefix="/environment/pma")
     
     from .environment.reforestation import environment_reforestation_bp
-    app.register_blueprint(environment_reforestation_bp, url_prefix="/reforestation")
+    app.register_blueprint(environment_reforestation_bp, url_prefix="/environment/reforestation")
+    
+    from .social import social_bp
+    app.register_blueprint(social_bp, url_prefix="/social")
     
     return app

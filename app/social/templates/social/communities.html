@@ -3,26 +3,33 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-    {% set href=url_for('pma.pma') %}
+<div class="col-lg-8 mx-auto pt-2">
+    {% set href= url_for('social.social') %}
     {% include "__title.html" %}
+
+    <a href="{{url_for('social.add_community')}}">
+        <button class="btn btn-primary">
+            <i class="bi bi-plus-circle">Nueva comunidad</i>
+        </button>
+    </a>
 
     <div class="table-responsible">
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">Nombre</th>
+                    <th scope="col">Comunidad</th>
                     <th scope="col">Descripción</th>
                     <th scope="col" colspan="2">Acción</th>
                 </tr>
             </thead>
             <tbody>
-                {% for activity in pma_activities %}
+                {% for community in communities %}
                 <tr>
-                    <td>{{ activity.name }}</td>
-                    <td>{{ activity.description }}</td>
+                    <td>{{ community.name }}</td>
+                    <td>{{ community.description }}</td>
                     <td>
-                        <a href="{{url_for('pma.add_pma_activity', pma_activity_id=activity.id)}}">
-                            <button class="btn btn-sm btn-primary">
+                        <a href="{{url_for('social.add_community', community_id=community.id)}}">
+                            <button class="btn btn-primary">
                                 <div>
                                     <i class="bi bi-pencil" ></i>
                                 </div>
@@ -33,12 +40,12 @@
                         </a>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{activity.id}}">
+                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{community.id}}">
                             <div><i class="bi bi-x-lg"></i></div>
                             <div><small>Borrar</small></div>
                         </button>
-                        {% set modal_id = activity.id %}
-                        {% set delete_url = url_for('pma.delete_pma_activity', pma_activity_id=activity.id) %}
+                        {% set modal_id = community.id %}
+                        {% set delete_url = url_for('social.delete_community', community_id=community.id) %}
                         {% include "__delete_modal.html"%}
                         
                     </td>
@@ -49,5 +56,7 @@
 
     </div>
 
+
+</div>
 
 {% endblock %}

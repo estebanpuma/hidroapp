@@ -1,10 +1,14 @@
 from flask import render_template, redirect, url_for, request
 from flask_login import login_user
-from sqlalchemy.exc import SQLAlchemyError
+
 from .models import User, Role, Module, RolePermission
-from .forms import LoginForm, AddUserForm
+
+from app.vars_const import months
 from . import admin_bp
+
 from app import db
+from app.models import Month
+
 
 from datetime import datetime
 
@@ -23,6 +27,7 @@ def users():
 @admin_bp.route("/add_user/<int:user_id>/", methods=["GET", "POST"])
 @admin_bp.route("/add_user", methods=["GET", "POST"])
 def add_user(user_id=None):
+    
     title = "Nuevo Usuario"
     
     error = None
@@ -251,6 +256,10 @@ def set_defaults():
     set_default_perm(2)
     
     create_admin_user()
+    
+    query_months = Month.query.all()
+    if len(query_months) < 12:
+        create_months()
         
     
 def create_dafult_modules():   
@@ -318,3 +327,12 @@ def create_admin_user():
         admin_user = User(id=1, name='admin', email = admin_email, role_id=admin_role)
         admin_user.set_password("admin")
         admin_user.save()
+        
+        
+def create_months():
+    
+    for key, value in months.items():
+        month = Month.get_by_id(Month,key)
+        if not month:
+            n_month = Month(id=key, name=value)
+            n_month.save()

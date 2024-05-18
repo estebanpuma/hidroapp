@@ -4,4 +4,49 @@
 
 {% block content %}
 
+    {% set href= url_for('pma.pma') %}
+    {% include "__title.html" %}
+
+        <div class="row justify-content-center p-2">
+            <div class="p-2  mx-auto border">
+
+                <form action="" method="post" class="mx-auto">
+                    
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nombre</label>
+                        <input type="text" id="name" name="name"  class="form-control" value="{{pma_activity.name}}" required>
+                        {% if error_msg %}
+                        <span class="text-danger">{{error_msg}}</span>
+                        {% endif %}
+                    </div>
+                
+            
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea  id="description" name="description"  class="form-control">{{pma_activity.description}}</textarea>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <p>Mes/es de ejecución</p>
+                        {% for month in months %}
+                        <div class="p-2 col-lg-3" >            
+                            <input type="checkbox" name="{{month.name}}" id="{{month.name}}" value="{{month.id}}" class="form-check-input mx-2">
+                            <label for="{{month.name}}" class="form-label text-capitalize">{{month.name}}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-grid col-sm-6 mx-auto">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                        
+                    </div>
+
+
+                </form>
+            </div>
+            
+        </div>
+
 {% endblock %}
