@@ -29,9 +29,25 @@
             <tbody>
                 {% for activity in pma_activities %}
                 <tr>
-                    <td><a href="{{url_for('pma.add_pma_activity', pma_activity_id=activity.id)}}" class="text-decoration-none">{{activity.name}}</a></td>
+                    <td>
+                        <a href="{{url_for('pma.add_pma_activity', pma_activity_id=activity.id)}}" class="text-decoration-none">{{activity.name}}</a>
+                    </td>
+                    {% for month in months %}
+                    <td>
+                        {% for activity_month in activity.months %}
+                            
+                            {% if activity_month.id == month.id %}
+                                <div class="bg-dark">
+                                    x
+                                </div>  
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                        
+                    {% endfor %}
                 </tr>
                 {% endfor %}
+
             </tbody>
         </table>
     </div>

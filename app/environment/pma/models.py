@@ -19,8 +19,12 @@ class PmaActivity(db.Model, BaseModel):
     
 
 class PmaActivityMonth(db.Model, BaseModel):
-    month_id = db.Column(db.Integer, db.ForeignKey("month.id"), primary_key=True)
-    pma_activity_id = db.Column(db.Integer, db.ForeignKey("pma_activity.id"), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
+    month_id = db.Column(db.Integer, db.ForeignKey("month.id"), index=True)
+    pma_activity_id = db.Column(db.Integer, db.ForeignKey("pma_activity.id"), index=True)
+    year = db.Column(db.Integer, nullable=False)
     
-    
+    @staticmethod
+    def get_by_act_month_year(activity, month, year):
+        return PmaActivityMonth.query.filter_by(pma_activity=activity, month_id=month, year=year).first()
     

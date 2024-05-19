@@ -30,7 +30,8 @@
                         <p>Mes/es de ejecución</p>
                         {% for month in months %}
                         <div class="p-2 col-lg-3" >            
-                            <input type="checkbox" name="{{month.name}}" id="{{month.name}}" value="{{month.id}}" class="form-check-input mx-2">
+                            <input type="checkbox" name="months" id="{{month.name}}" value={{month.id}} 
+                            class="form-check-input mx-2" {% if month.id in am_list  %}checked{% endif %}>
                             <label for="{{month.name}}" class="form-label text-capitalize">{{month.name}}</label>
                         </div>
                         {% endfor %}

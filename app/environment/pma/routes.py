@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request
 
 from . import environment_pma_bp
-from .models import PmaActivity, Month
+from .models import PmaActivity, Month, PmaActivityMonth
 
 @environment_pma_bp.route("/pma")
 def pma():
@@ -10,10 +10,17 @@ def pma():
     
     pma_activities = PmaActivity.query.all()
     
+    for a in pma_activities:
+        print(a.months)
+    
+    pma_activity_month = PmaActivityMonth.query.filter_by(year=2024).all()
+
+    
     return render_template("pma/pma.html",
                            title = title,
                            months = months,
-                           pma_activities = pma_activities)
+                           pma_activities = pma_activities,
+                           pma_activity_month = pma_activity_month)
     
 
 @environment_pma_bp.route("/pma_activities")
@@ -33,18 +40,38 @@ def add_pma_activity(pma_activity_id=None):
     error_msg = None
     months = Month.query.all()
     pma_activity = PmaActivity.get_by_id(pma_activity_id)
-    
+    pma_activity_month = PmaActivityMonth.query.filter_by(pma_activity_id=pma_activity.id, year=2024).all() or None
+    am_list = []
+    if pma_activity_month:
+        for ac in pma_activity_month:
+            am_list.append(int(ac.month_id)) 
+    print(am_list)
+        
     if request.method == "POST":
         name = request.form["name"]
         description = request.form["description"]
+        selected_months = request.form.getlist("months")
         
-        print(f"esta es la descriptcion {description}")
+        print(f"esta es monthss{selected_months}")
         
         if pma_activity:
-            print(f"este es el actuall pma {pma_activity.name, pma_activity.description}")
             pma_activity.name = name
             pma_activity.description = description
+            
+            
+            
+            
+            
+            for a in pma_activity_month:
+                a.delete()
+                
+            for month in selected_months:
+                    
+                    activity_month = PmaActivityMonth(month_id=int(month), pma_activity_id=pma_activity.id, year=2024)
+                    activity_month.save()
             pma_activity.save()
+            
+            
             print(f"este es el nuevo pma {pma_activity.name, pma_activity.description}")
             return redirect(url_for('pma.pma_activities'))
         else:
@@ -57,6 +84,10 @@ def add_pma_activity(pma_activity_id=None):
                                             description = description)
                 n_pma_activity.save()
                 
+                for month in selected_months:
+                    activity_month = PmaActivityMonth(month_id=int(month), pma_activity_id=n_pma_activity.id, year=2024)
+                    activity_month.save()
+                
                     
                 return redirect(url_for('pma.pma_activities'))
             
@@ -65,7 +96,8 @@ def add_pma_activity(pma_activity_id=None):
                            title = title,
                            pma_activity = pma_activity,
                            error_msg = error_msg,
-                           months = months)
+                           months = months,
+                           am_list = am_list)
     
 
 @environment_pma_bp.route("/delete_pma_activity/<int:pma_activity_id>", methods=["GET", "POST"])
