@@ -31,19 +31,21 @@ def add_user(user_id=None):
     title = "Nuevo Usuario"
     
     error = None
-    
+    roles = Role.query.all()
+    print(f"rols {roles}")
     if request.method == "POST":
         name = request.form['name']
         email = request.form["email"]
         password = request.form["password"]
-        role = request.form["role"]
+        role = int(request.form["role"])
         birth = request.form["birth"]
-        
-        birth = datetime.strptime(birth, '%Y-%m-%d').date()
-        
+        if birth:
+            birth = datetime.strptime(birth, '%Y-%m-%d').date()
+        else:
+            birth = None
         user = User.get_by_email(email)
         
-        print(name,email,role, password)
+        print(name,email,role, type(role), password, birth)
         
         if user is not None:
             error = f'El email {email} ya esta en uso'
@@ -52,12 +54,10 @@ def add_user(user_id=None):
             
             n_user = User(name=name, 
                           email=email,
-                          role = role,
+                          role_id = role,
                           birth = birth)
             n_user.set_password(password)
             n_user.save()
-            
-            login_user(n_user)
             
             next_page = request.args.get('next', None)
             
@@ -68,7 +68,8 @@ def add_user(user_id=None):
             
     return render_template("admin/add_user.html",
                            title = title,
-                           error = error)
+                           error = error,
+                           roles = roles)
     
 
 @admin_bp.route("/roles")

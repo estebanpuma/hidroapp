@@ -1,0 +1,17 @@
+<div class="mb-3">
+    <label for="responsible" class="form-label">Responsable</label>
+
+    <select id="responsible" name="responsible" class="form-select">
+        {% if pma_activity.responsible %}
+            <option value="{{activity.responsible.id}}" selected>{{pma_activity.responsible.name}}</option>
+        {% endif %}
+        {% for user in users %}
+            
+            {% if pma_activity.responsible == None %}
+                <option value="{{user.id}}" {% if user.id == current_user.id %} selected {% endif %}>{{user.name}}</option>
+            {% else %}
+                <option value="{{user.id}}" >{{user.name}}</option>
+            {% endif %}
+        {% endfor %}      
+    </select>
+</div>

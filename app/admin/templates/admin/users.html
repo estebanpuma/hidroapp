@@ -3,7 +3,7 @@
 {% block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<div class="col-lg-8 mx-auto">
+
     <div class="row text-center">
         <h1 class="col-1"><a href=""><i class="bi bi-chevron-left"></i></a></h1>
         <h1 class="col">{{title}}</h1>
@@ -33,13 +33,16 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.birth }}</td>
                     <td>
-                        <button class="btn btn-primary">
-                            <div><i class="bi bi-pencil"></i></div>
-                            <div><small>Editar</small></div>
-                        </button>
+                        <a href="{{url_for('admin.add_user', user_id=user.id)}}" class="text-decoration-none">
+                            <button class="btn btn-sm btn-primary">
+                                <div><i class="bi bi-pencil"></i></div>
+                                <div><small>Editar</small></div>
+                            </button>
+                        </a>
+                        
                     </td>
                     <td>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             <div><i class="bi bi-x-lg"></i></div>
                             <div><small>Borrar</small></div>
                         </button>
@@ -69,6 +72,5 @@
             </tbody>
         </table>
     </div>
-</div>
-    
+
 {% endblock %}

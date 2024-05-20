@@ -1,7 +1,9 @@
 from flask import render_template, redirect, url_for, request
 
 from . import environment_pma_bp
-from .models import PmaActivity, Month, PmaActivityMonth
+from .models import PmaActivity, Month, PmaActivityMonth, User
+
+from app.common_func import get_users_list
 
 @environment_pma_bp.route("/pma")
 def pma():
@@ -38,9 +40,11 @@ def pma_activities():
 def add_pma_activity(pma_activity_id=None):
     title = "Plan de Manejo Ambiental"
     error_msg = None
+    users = get_users_list()
+    print(f"users: {users}")
     months = Month.query.all()
     pma_activity = PmaActivity.get_by_id(pma_activity_id)
-    pma_activity_month = PmaActivityMonth.query.filter_by(pma_activity_id=pma_activity.id, year=2024).all() or None
+    pma_activity_month = PmaActivityMonth.query.filter_by(pma_activity_id=pma_activity_id, year=2024).all()
     am_list = []
     if pma_activity_month:
         for ac in pma_activity_month:
@@ -51,16 +55,14 @@ def add_pma_activity(pma_activity_id=None):
         name = request.form["name"]
         description = request.form["description"]
         selected_months = request.form.getlist("months")
+        responsible = request.form["responsible"]
         
         print(f"esta es monthss{selected_months}")
         
         if pma_activity:
             pma_activity.name = name
             pma_activity.description = description
-            
-            
-            
-            
+            pma_activity.responsible_id = responsible
             
             for a in pma_activity_month:
                 a.delete()
@@ -81,7 +83,8 @@ def add_pma_activity(pma_activity_id=None):
                 error_msg = f"La actividad con el nombre '{name}' ya se encuentra registrada"
             else:
                 n_pma_activity = PmaActivity(name = name,
-                                            description = description)
+                                            description = description,
+                                            responsible_id = responsible)
                 n_pma_activity.save()
                 
                 for month in selected_months:
@@ -97,7 +100,8 @@ def add_pma_activity(pma_activity_id=None):
                            pma_activity = pma_activity,
                            error_msg = error_msg,
                            months = months,
-                           am_list = am_list)
+                           am_list = am_list,
+                           users = users)
     
 
 @environment_pma_bp.route("/delete_pma_activity/<int:pma_activity_id>", methods=["GET", "POST"])

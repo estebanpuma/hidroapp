@@ -37,10 +37,17 @@
                         {% for activity_month in activity.months %}
                             
                             {% if activity_month.id == month.id %}
+                                {% if activity_month.is_done %}
+                                <div class="bg-succes">
+                                    ok
+                                </div> 
+                                {% else %}
                                 <div class="bg-dark">
                                     x
-                                </div>  
+                                </div>
+                                {% endif %}
                             {% endif %}
+
                         {% endfor %}
                     </td>
                         

@@ -2,11 +2,15 @@ from app import db
 
 from app.models import BaseModel, Month
 
+from ...admin.models import User
+
 
 class PmaActivity(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String)
+    responsible_id = db.Column(db.Integer, db.ForeignKey("app_users.id"))
+    responsible = db.relationship("User", backref="pma_activities")
     months = db.relationship("Month", secondary="pma_activity_month", backref="pma_activities")
     
     @staticmethod
@@ -22,6 +26,7 @@ class PmaActivityMonth(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     month_id = db.Column(db.Integer, db.ForeignKey("month.id"), index=True)
     pma_activity_id = db.Column(db.Integer, db.ForeignKey("pma_activity.id"), index=True)
+    is_done = db.Column(db.Boolean, default=False)
     year = db.Column(db.Integer, nullable=False)
     
     @staticmethod

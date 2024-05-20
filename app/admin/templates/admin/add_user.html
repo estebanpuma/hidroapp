@@ -35,18 +35,14 @@
                 <label for="role" class="form-label">Rol</label>
                 <select class="form-select" id="role" name="role" required>
                     <option value="" selected>Selecciona un rol</option>
-                    <option value="1">Operador</option>
-                    <option value="2">Ayudante de operación</option>
-                    <option value="3">Monitor/a ambiental</option>
-                    <option value="4">Comunicador/a social</option>
-                    <option value="5">Jefe sso y ma</option>
-                    <option value="6">Gerente General</option>
-                    <option value="7">Admin</option>
+                    {% for role in roles %}
+                        <option value="{{role.id}}">{{role.name}}</option>
+                    {% endfor %}
                 </select>
             </div>
             <div class="mb-3">
                 <label for="date" class="form-label">Fecha de nacimiento</label>
-                <input type="date" class="form-control" id="birth" name="birth" required>
+                <input type="date" class="form-control" id="birth" name="birth" >
             </div>
             <div class="d-grid col-md-6 mx-auto mb-3 pt-5">
                 <button id="submit"  type="submit" class="btn btn-primary">Registrar</button>
