@@ -1,15 +1,15 @@
 from app import db
 
-from app.models import BaseModel, Month
+from app.models import BaseModel, Month, Activity
 
 from ...admin.models import User
 
 
 class PmaActivity(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, unique=True, nullable=False)
-    description = db.Column(db.String)
+    activity_id = db.Column(db.String, nullable=False)
     responsible_id = db.Column(db.Integer, db.ForeignKey("app_users.id"))
+    activity = db.relationship("Activity", backref="pma_activities")
     responsible = db.relationship("User", backref="pma_activities")
     months = db.relationship("Month", secondary="pma_activity_month", backref="pma_activities")
     

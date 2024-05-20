@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db 
-from app.models import BaseModel
+from app.models import BaseModel, Module
 
 
 
@@ -59,21 +59,7 @@ class Role(db.Model, BaseModel):
         return Role.query.get(id)
     
 
-class Module(db.Model, BaseModel):
-    
-    __tablename__ = "modules"
-    
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    description = db.Column(db.String)
-    
-     
-    def __repr__(self):
-        return self.name 
-     
-    @staticmethod
-    def get_by_id(id):
-        return Module.query.get(id)
+
     
     
 class RolePermission(db.Model, BaseModel):

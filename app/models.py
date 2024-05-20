@@ -53,3 +53,39 @@ class Month(db.Model, BaseModel):
     
     def __repr__(self):
         return self.name
+
+
+class Activity(db.Model, BaseModel):
+    id = db.Column(db.Integer, primary_key=True)
+    module = db.Column(db.String, db.ForeignKey("module.name") ,nullable = False)
+    name = db.Column(db.String, unique=True, nullable=False)
+    description = db.Column(db.String)
+    notes = db.Column(db.String)
+    
+    @staticmethod
+    def get_by_module(module):
+        return Activity.query.filter_by(module=module).all()
+    
+
+class Module(db.Model, BaseModel):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True, nullable=False)
+    description = db.Column(db.String)
+    
+    def __repr__(self):
+        return self.name 
+    
+    @staticmethod
+    def get_by_id(id):
+        return Module.query.get(id)
+    
+    @staticmethod
+    def get_by_name(name):
+        return Module.query.filter_by(name=name).first()
+    
+
+    
+     
+    
+     
+    

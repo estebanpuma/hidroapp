@@ -1,7 +1,8 @@
 from flask import render_template, redirect, url_for, request
 
 from . import environment_pma_bp
-from .models import PmaActivity, Month, PmaActivityMonth, User
+from .models import PmaActivity, Month, PmaActivityMonth, User, Activity
+from . variables import module
 
 from app.common_func import get_users_list
 
@@ -10,7 +11,7 @@ def pma():
     title = "PMA"
     months = Month.query.all()
     
-    pma_activities = PmaActivity.query.all()
+    pma_activities = Activity.get_by_module(module)
     
     for a in pma_activities:
         print(a.months)
@@ -28,7 +29,7 @@ def pma():
 @environment_pma_bp.route("/pma_activities")
 def pma_activities():
     title = "Actividades del PMA"
-    pma_activities = PmaActivity.query.all()
+    pma_activities = Activity.get_by_module(module)
     
     return render_template("pma/pma_activities.html",
                            title = title,
@@ -43,7 +44,7 @@ def add_pma_activity(pma_activity_id=None):
     users = get_users_list()
     print(f"users: {users}")
     months = Month.query.all()
-    pma_activity = PmaActivity.get_by_id(pma_activity_id)
+    pma_activity = Activity.get_by_id(pma_activity_id)
     pma_activity_month = PmaActivityMonth.query.filter_by(pma_activity_id=pma_activity_id, year=2024).all()
     am_list = []
     if pma_activity_month:
@@ -77,14 +78,14 @@ def add_pma_activity(pma_activity_id=None):
             print(f"este es el nuevo pma {pma_activity.name, pma_activity.description}")
             return redirect(url_for('pma.pma_activities'))
         else:
-            name_exist = already_exist(PmaActivity, name)
+            name_exist = already_exist(Activity, name)
             
             if name_exist:
                 error_msg = f"La actividad con el nombre '{name}' ya se encuentra registrada"
             else:
-                n_pma_activity = PmaActivity(name = name,
-                                            description = description,
-                                            responsible_id = responsible)
+                n_pma_activity = Activity(name = name,
+                                          module = module,
+                                            description = description)
                 n_pma_activity.save()
                 
                 for month in selected_months:
@@ -103,6 +104,26 @@ def add_pma_activity(pma_activity_id=None):
                            am_list = am_list,
                            users = users)
     
+
+@environment_pma_bp.route("/pma_schedule/<int:pma_activity_id>", methods=["GET", "POST"])
+@environment_pma_bp.route("/pma_schedule", methods=["GET", "POST"])
+def pma_schedule(pma_activity_id=None):
+    title = "Agregar actividad al pma"
+    am_list = []
+    users = get_users_list()
+    if pma_activity_id:
+        pma_activity = PmaActivity.get_by_id()
+        pacm = PmaActivityMonth.query.filter_by(pma_activity_id=pma_activity_id, year=2024)
+    else:
+        pma_activity = None
+    
+    
+    return render_template("pma.pma_schedule.html",
+                           title = title,
+                           pma_activitiy = pma_activity,
+                           users = users,
+                           am_list = am_list)
+
 
 @environment_pma_bp.route("/delete_pma_activity/<int:pma_activity_id>", methods=["GET", "POST"])
 def delete_pma_activity(pma_activity_id=None):

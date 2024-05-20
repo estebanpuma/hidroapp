@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+
+{% block content %}
+
+    {% set href = url_for('pma.pma') %}
+    {% include "__title.html" %}
+
+    <form action="" method="post">
+        <div class="mb-3">
+            <h3>Cronograma</h3>
+        </div>
+        <div class="mb-3">
+            <label for="pma-activity" class="form-label">Nombre</label>
+            <select name="pma-activity" id="pma-activity" class="form-select" required>
+                
+                {% if pma_activity %}
+                    <option value={{pma_activity.id}} selected>{{pma_activity.name}}</option>    
+                {% else %}
+                    <option value="" selected>Selecciona una actividad</option>
+                {% for activity in pma_activities %}
+                    {% if activity != pma_activity %}
+                        <option value="{{activity.id}}" >{{activity.name}}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <label for="responsible" class="form-label">Nombre</label>
+            <select name="responsible" id="responsible" class="form-select" required>
+                
+                {% if pma_activity %}
+                    <option value={{pma_activity.responsible_id}} selected>{{pma_activity.responsible.name}}</option>    
+                {% else %}
+                    <option value="" selected>Selecciona un responsable</option>
+                {% for user in users %}
+                    <option value="{{activity.id}}" >{{activity.name}}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+        </div>
+
+        <div class="mb-3">
+            <p>Mes de ejecución</p>
+            <div class="table-responsive row">
+                {% for month in months %}
+                    <div class="col-1">
+                        <label for="{{month.name}}">{{month.name[0:3]}}</label>
+                        <input type="checkbox" name="months" id="{{month.name}}" value="{{month.id}}"
+                        class="form-check-input" {% if month.id in am_list  %}checked{% endif %}>
+                    </div>
+                {% endfor %}
+            </div>
+            
+        </div>
+
+        <div class="mb-3">
+            <div class="d-grid col-sm-6 mx-auto">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+            
+        </div>
+
+    </form>
+
+{% endblock %}
