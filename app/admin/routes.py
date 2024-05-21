@@ -1,13 +1,13 @@
 from flask import render_template, redirect, url_for, request
 from flask_login import login_user
 
-from .models import User, Role, Module, RolePermission
+from .models import User, Role, Module, RolePermission, Month
 
 from app.vars_const import months
 from . import admin_bp
 
 from app import db
-from app.models import Month
+
 
 
 from datetime import datetime

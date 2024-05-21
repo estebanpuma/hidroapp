@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    {% set href= url_for('pma.pma') %}
+    {% set href= url_for('pga.pga') %}
     {% include "__title.html" %}
 
         <div class="row justify-content-center p-2">
@@ -13,29 +13,25 @@
                 <form action="" method="post" class="mx-auto">
                     
                     <div class="mb-3">
-                        <label for="name" class="form-label">Nombre</label>
-                        <input type="text" id="name" name="name"  class="form-control" value="{{pma_activity.name}}" required>
-                        {% if error_msg %}
-                        <span class="text-danger">{{error_msg}}</span>
-                        {% endif %}
+                        <label for="activity" class="form-label">Actividad</label>
+                        <select name="activity" id="activity" class="form-select">
+                            <option value="">Selecciona una actividad</option>
+                            {% for activity in activities %}
+                                <option value={{activity.id}}>{{activity.name}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 
-            
-                    <div class="mb-3">
-                        <label for="description" class="form-label">Descripción</label>
-                        <textarea  id="description" name="description"  class="form-control">{{pma_activity.description}}</textarea>
-                    </div>
-
                     <div class="mb-3">
                         <label for="responsible" class="form-label">Responsable</label>
 
                         <select id="responsible" name="responsible" class="form-select">
-                            {% if pma_activity.responsible %}
-                                <option value="{{pma_activity.responsible.id}}" selected>{{pma_activity.responsible.name}}</option>
+                            {% if pga_activity.responsible %}
+                                <option value="{{pga.activity.responsible.id}}" selected>{{pga_activity.responsible.name}}</option>
                             {% endif %}
                             {% for user in users %}
                                 
-                                {% if pma_activity.responsible == None %}
+                                {% if pga_activity.responsible == None %}
                                     <option value="{{user.id}}" {% if user.id == current_user.id %} selected {% endif %}>{{user.name}}</option>
                                 {% else %}
                                     <option value="{{user.id}}" >{{user.name}}</option>
@@ -44,10 +40,10 @@
                         </select>
                     </div>
 
-                    <div class="mb-3 row">
+                    <div class="mb-3">
                         <p>Mes/es de ejecución</p>
                         {% for month in months %}
-                        <div class="p-2 col-lg-3" >            
+                        <div class="p-2 table-responsive-md" >            
                             <input type="checkbox" name="months" id="{{month.name}}" value={{month.id}} 
                             class="form-check-input mx-2" {% if month.id in am_list  %}checked{% endif %}>
                             <label for="{{month.name}}" class="form-label text-capitalize">{{month.name}}</label>

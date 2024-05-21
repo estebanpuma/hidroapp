@@ -1,5 +1,8 @@
+from flask import redirect, url_for
 from flask_login import current_user
+
 from app.admin.models import User, Role
+from app.common.models import Activity
 
 
 def get_users_list():
@@ -21,3 +24,19 @@ def get_role_list():
     roles = Role.query.all()
     return roles
         
+        
+def already_exist(obj_class, name, module=None):
+    if module:
+        n_instance = obj_class.query.filter_by(name=name, module=module).first()
+    else:
+        n_instance = obj_class.get_by_name(name)
+
+    return bool(n_instance)
+
+
+def delete_activity(activity_id):
+    activity = Activity.get_by_id(activity_id)
+    if activity:
+        activity.delete()
+        
+    

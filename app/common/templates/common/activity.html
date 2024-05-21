@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    <div class="container mt-5">
+        <h1>Detalles de la Actividad</h1>
+        <hr>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">{{ activity.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Módulo: {{ activity.module }}</h6>
+                <p class="card-text">Descripción:</p>
+                <p>{{ activity.description }}</p>
+                <p class="card-text">Observaciones:</p>
+                <p>{{ activity.observations }}</p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

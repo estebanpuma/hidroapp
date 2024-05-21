@@ -23,6 +23,9 @@ def create_app(config):
     from .admin import admin_bp
     app.register_blueprint(admin_bp, url_prefix="/admin")
     
+    from .common import common_bp
+    app.register_blueprint(common_bp)
+    
     from .public import public_bp
     app.register_blueprint(public_bp)
     
@@ -32,8 +35,8 @@ def create_app(config):
     from .environment import environment_bp
     app.register_blueprint(environment_bp, url_prefix="/environment")
     
-    from .environment.pma import environment_pma_bp
-    app.register_blueprint(environment_pma_bp, url_prefix="/environment/pma")
+    from .environment.pga import environment_pga_bp
+    app.register_blueprint(environment_pga_bp, url_prefix="/environment/pga")
     
     from .environment.reforestation import environment_reforestation_bp
     app.register_blueprint(environment_reforestation_bp, url_prefix="/environment/reforestation")

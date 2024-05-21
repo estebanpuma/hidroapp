@@ -57,7 +57,7 @@ class Month(db.Model, BaseModel):
 
 class Activity(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
-    module = db.Column(db.String, db.ForeignKey("module.name") ,nullable = False)
+    module = db.Column(db.String, db.ForeignKey("modules.name") ,nullable = False)
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String)
     notes = db.Column(db.String)
@@ -68,6 +68,9 @@ class Activity(db.Model, BaseModel):
     
 
 class Module(db.Model, BaseModel):
+ 
+    __tablename__ = "modules"
+    
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String)

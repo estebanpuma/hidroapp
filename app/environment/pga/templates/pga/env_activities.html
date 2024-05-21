@@ -3,25 +3,44 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-    {% set href=url_for('pma.pma') %}
+    {% set href=url_for('pga.pga') %}
     {% include "__title.html" %}
 
-    <div class="table-responsible">
-        <table class="table">
+    <section>
+        <a href="{{url_for('pga.add_activity')}}">
+            <button class="btn btn-primary">Nueva actividad</button>
+        </a>
+    </section>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
             <thead>
                 <tr>
                     <th scope="col">Nombre</th>
                     <th scope="col">Descripción</th>
-                    <th scope="col" colspan="2">Acción</th>
+                    <th scope="col" colspan="3">Acción</th>
                 </tr>
             </thead>
             <tbody>
-                {% for activity in pma_activities %}
+                {% for activity in env_activities %}
                 <tr>
-                    <td>{{ activity.name }}</td>
+                    <td >{{ activity.name }}</td>
                     <td>{{ activity.description }}</td>
                     <td>
-                        <a href="{{url_for('pma.add_pma_activity', pma_activity_id=activity.id)}}">
+                        <a href="{{url_for('common.activity', module=module, activity_id=activity.id)}}">
+                            <button class="btn btn-sm btn-primary">
+                                <div>
+                                    <i class="bi bi-eye" ></i>
+                                </div>
+                                <div>
+                                    <small>Ver</small>
+                                </div>
+                            </button>
+                        </a>    
+                    </td>
+           
+                    <td >
+                        <a href="{{url_for('pga.add_activity', activity_id=activity.id)}}">
                             <button class="btn btn-sm btn-primary">
                                 <div>
                                     <i class="bi bi-pencil" ></i>
@@ -38,7 +57,7 @@
                             <div><small>Borrar</small></div>
                         </button>
                         {% set modal_id = activity.id %}
-                        {% set delete_url = url_for('pma.delete_pma_activity', pma_activity_id=activity.id) %}
+                        {% set delete_url = url_for('pga.delete_env_activity', activity_id=activity.id) %}
                         {% include "__delete_modal.html"%}
                         
                     </td>
