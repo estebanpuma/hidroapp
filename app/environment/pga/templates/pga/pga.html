@@ -6,8 +6,10 @@
 
     {% set href = url_for('environment.environment') %}
     {% include "__title.html" %}
+   
+    {% include "__flash_msg.html" %}
 
-    <div>
+    <div class="mb-3">
         <a href="{{url_for('pga.add_pga_activity')}}" class="text-ligth">
             <button class="btn btn-primary">
                 <i class="bi bi-plus-circle">Nueva actividad</i>
@@ -15,15 +17,22 @@
         </a>
     </div>
 
-    <div class="table-responsive">
+
+    <div class="table-responsive mt-5">
         <table class="table table-hover">
             <thead>
+                <tr>
+                    <div class="bg-light">
+                        <i class="bi bi-calendar-date">Programa anual de gestión ambiental</i>
+                    </div>
+                </tr>
                 <tr>
                     <th scope="col"><a href="{{url_for('pga.env_activities')}}" class="text-decoration-none text-dark"><i class="bi bi-box-arrow-up-right">Actividad </i></a></th>
                     {% for month in months %}
                     <th scope="col"> {{month.name[0:3]}}</th>
                     {% endfor %}
-                    <th scope="col">Responsable</th>
+                    <th  scope="col">Responsable</th>
+                    <th  colspan="">Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -39,10 +48,10 @@
                             {% if activity_month.id == month.id %}
                                 {% if activity_month.is_done %}
                                 <div class="bg-succes">
-                                    ok
+                                    x
                                 </div> 
                                 {% else %}
-                                <div class="bg-dark">
+                                <div class="bg-secondary text-secondary">
                                     x
                                 </div>
                                 {% endif %}
@@ -55,6 +64,12 @@
                     <td>
                         {{activity.responsible.name}}
                     </td>
+                    <td><a href="{{url_for('pga.delete_pga_activity', pga_activity_id=activity.id)}}" class="text-decoration-none">
+                        <button class="btn btn-sm btn-danger">
+                            <i class="bi bi-x-lg"></i>
+                            <span class="d-none d-md-block"><small>Borrar</small></span>
+                        </button>
+                    </a></td>
                 </tr>
                 {% endfor %}
 

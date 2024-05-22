@@ -3,5 +3,32 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
+{% set href = previous_url %}
+
+    {% include "__title.html" %}
+   
+    {% include "__flash_msg.html" %}
+
+    <div>
+        <form action="" method="post">
+            <div class="mb-3">
+                <label for="name">Nombre</label>
+                <input type="text" name="name" id="name" required class="form-control">
+            </div>
+
+            <div class="mb-3">
+                <label for="description">Descripción</label>
+                <textarea rows="5" cols="" name="description" id="description" class="form-control" placeholder="Ingresa una descripción">
+
+                </textarea>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+
+            </div>
+        </form>
+        
+    </div>
 
 {% endblock %}

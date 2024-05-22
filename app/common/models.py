@@ -27,8 +27,7 @@ class BaseModel():
         except SQLAlchemyError as e:
             db.session.rollback()
             print(f"Error occurred while deleting: {e}")
-            
-    @staticmethod        
+                 
     def __repr__(self):
         return self.name
     
@@ -44,7 +43,7 @@ class BaseModel():
         if cls.name:
             return cls.query.filter_by(name=name).first()
         else:
-            print("error, no existe id")
+            print("error, no existe")
             
 
 class Month(db.Model, BaseModel):

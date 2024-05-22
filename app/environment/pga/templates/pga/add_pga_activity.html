@@ -14,10 +14,13 @@
                     
                     <div class="mb-3">
                         <label for="activity" class="form-label">Actividad</label>
-                        <select name="activity" id="activity" class="form-select">
+                        <select name="activity" id="activity" class="form-select" required {% if pga_activity %} disabled {% endif %}>
                             <option value="">Selecciona una actividad</option>
                             {% for activity in activities %}
-                                <option value={{activity.id}}>{{activity.name}}</option>
+                                {% if pga_activity %}
+                                    <option value="{{activity.id}}" selected>{{pga_activity.activity.name}}</option>
+                                {% endif %}
+                                <option value={{activity.id}} >{{activity.name}}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -25,16 +28,14 @@
                     <div class="mb-3">
                         <label for="responsible" class="form-label">Responsable</label>
 
-                        <select id="responsible" name="responsible" class="form-select">
-                            {% if pga_activity.responsible %}
-                                <option value="{{pga.activity.responsible.id}}" selected>{{pga_activity.responsible.name}}</option>
-                            {% endif %}
+                        <select id="responsible" name="responsible" class="form-select" required>
+                            
                             {% for user in users %}
-                                
-                                {% if pga_activity.responsible == None %}
-                                    <option value="{{user.id}}" {% if user.id == current_user.id %} selected {% endif %}>{{user.name}}</option>
+                            
+                                {% if pga_activity and pga_activity.responsible_id == user.id %}
+                                    <option value="{{pga_activity.responsible_id}}" selected>{{pga_activity.responsible.name}}</option>
                                 {% else %}
-                                    <option value="{{user.id}}" >{{user.name}}</option>
+                                    <option value="{{user.id}}" {% if user.id == current_user.id %} selected {% endif %}>{{user.name}}</option>
                                 {% endif %}
                             {% endfor %}      
                         </select>
@@ -42,18 +43,38 @@
 
                     <div class="mb-3">
                         <p>Mes/es de ejecución</p>
-                        {% for month in months %}
-                        <div class="p-2 table-responsive-md" >            
-                            <input type="checkbox" name="months" id="{{month.name}}" value={{month.id}} 
-                            class="form-check-input mx-2" {% if month.id in am_list  %}checked{% endif %}>
-                            <label for="{{month.name}}" class="form-label text-capitalize">{{month.name}}</label>
+                        
+                        <div class="p-2 table-responsive-md" >
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        {% for month in months %}
+                                            <th scope="col">
+                                                {{month.name[0:3]}}
+                                            </th>
+                                        {% endfor %}
+                                    </tr>
+                                    
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        {% for month in months %}
+                                            <td>
+                                                <input type="checkbox" name="months" id="{{month.name}}" value={{month.id}} 
+                                                class="form-check-input mx-2" {% if month.id in am_list  %}checked{% endif %}>
+                                            </td>
+                                        {% endfor %}
+                                    </tr>
+                                </tbody>
+                            </table>            
+                            
+                            
                         </div>
-                        {% endfor %}
                     </div>
 
                     <div class="mb-3">
                         <div class="d-grid col-sm-6 mx-auto">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" class="btn btn-primary mt-5">Guardar</button>
                         </div>
                         
                     </div>

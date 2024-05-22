@@ -18,43 +18,43 @@
                 <tr>
                     <th scope="col">Nombre</th>
                     <th scope="col">Descripción</th>
-                    <th scope="col" colspan="3">Acción</th>
+                    <th class="col-3" scope="col" colspan="3">Acción</th>
                 </tr>
             </thead>
             <tbody>
                 {% for activity in env_activities %}
                 <tr>
                     <td >{{ activity.name }}</td>
-                    <td>{{ activity.description }}</td>
-                    <td>
+                    <td>{{ activity.doc }}</td>
+                    <td >
                         <a href="{{url_for('common.activity', module=module, activity_id=activity.id)}}">
-                            <button class="btn btn-sm btn-primary">
+                            <button class="btn btn-sm btn-secondary">
                                 <div>
-                                    <i class="bi bi-eye" ></i>
+                                    <i class="bi bi-eye mx-2" ></i>
                                 </div>
-                                <div>
+                                <div class="d-none d-md-block">
                                     <small>Ver</small>
                                 </div>
                             </button>
                         </a>    
                     </td>
            
-                    <td >
-                        <a href="{{url_for('pga.add_activity', activity_id=activity.id)}}">
-                            <button class="btn btn-sm btn-primary">
+                    <td>
+                        <a href="{{url_for('pga.add_activity', activity_id=activity.id)}}" >
+                            <button class="btn btn-sm btn-primary" >
                                 <div>
-                                    <i class="bi bi-pencil" ></i>
+                                    <i class="bi bi-pencil mx-2" ></i>
                                 </div>
-                                <div>
+                                <div class="d-none d-md-block">
                                     <small>Edit</small>
                                 </div>
                             </button>
                         </a>
                     </td>
-                    <td>
+                    <td >
                         <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{activity.id}}">
-                            <div><i class="bi bi-x-lg"></i></div>
-                            <div><small>Borrar</small></div>
+                            <div><i class="bi bi-x-lg mx-2"></i></div>
+                            <div class="d-none d-md-block"><small>Borrar</small></div>
                         </button>
                         {% set modal_id = activity.id %}
                         {% set delete_url = url_for('pga.delete_env_activity', activity_id=activity.id) %}

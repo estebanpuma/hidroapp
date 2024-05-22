@@ -41,8 +41,12 @@ def plant_tracking():
 @environment_reforestation_bp.route("/add_plant", methods=['GET', 'POST'])
 def add_plant():
     title = "Nueva planta"
+    previous_url = request.referrer
+    if previous_url is None:
+        previous_url = url_for("public.index")
     return render_template("reforestation/add_plant.html",
-                           title = title)
+                           title = title,
+                           previous_url = previous_url)
     
     
 @environment_reforestation_bp.route("/add_entry", methods=['GET', 'POST'])
