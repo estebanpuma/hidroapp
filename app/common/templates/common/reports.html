@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+    {% set href = url_for('public.index') %}
+    {% include "__title.html" %}
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Código</th>                 
+                    <th scope="col">Actividad</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col" colspan="2">Acción</th>
+                </tr>
+                <tbody>
+                    {% for report in reports %}
+                        <tr>
+                            <td>
+                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-secondary">
+                                    {{ report.code }} <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </td>               
+                            <td>{{ report.activity }}</td>
+                            <td>{{ report.date }}</td>
+                            <td>                                   
+                                <a class="col text-center text-decoration-none text-secondary" href="{{url_for('common.delete_report', report_id=report.id)}}">
+                                    <div>
+                                        <i class="bi bi-trash"></i>
+                                    </div>
+                                </a>                    
+                            </td>                            
+                        </tr>
+                    {% endfor %}    
+                </tbody>
+            </thead>
+
+        </table>
+
+    </div>
+
+{% endblock %}

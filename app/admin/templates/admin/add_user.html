@@ -3,11 +3,9 @@
 {%  block title %} {{ title }} {% endblock %}
 
 {% block content %}
-<div class="g-2 row text-center col-lg-8 mx-auto">
-    <h1 class="col-1"><a href="{{url_for('admin.users')}}" class=""><i class="bi bi-chevron-left"></i></a> </h1>
-    <h1 class="col text-primary-emphasis">{{ title }}</h1>
-    <h1 class="col-1"></h1>
-</div>
+{% set href = previous_url %}
+{% include "__title.html" %}
+
 <div class="justify-content-center row mt-5">
     
     

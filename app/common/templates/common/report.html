@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    
+        <h2 class="mb-4">Reporte de Trabajo</h2>
+        <form method="POST" action="" enctype="multipart/form-data" id="uploadForm">
+           
+            <div class="form-group mb-3 row">
+                <div class="col-sm-6">
+                    <label for="code">Código:</label>
+                    {% if report.code is none %} 
+                    <input type="text" class="form-control"  value="{{code}}" disabled>
+                    <input type="text"  id="code" name="code" value="{{code}}" hidden>
+                    
+                    {% else %}
+                    <input type="text" class="form-control" id="code" name="code" value="{{code}}">
+                    {% endif %}
+                    
+                    
+                </div>
+                <div class="col-sm-6">
+                    <label for="mod">Módulo:</label>
+                    {% if report.mod_id %}
+                    <select name="mod_id" id="mod_id" class="form-select" required>
+                        {% for m in mods %}
+                            <option value="{{m.id}}" {% if report.mod_id == m.id %} selected {% endif %} >{{m.name}}</option>
+                        {% endfor %}
+                    </select>
+                    {% else %}
+                    <input type="text" name="" id="" class="form-control" value="{{mod.name}}" disabled>
+                    <input type="text" name="mod_id" value="{{mod.id}}" hidden>
+                    {% endif %}
+                </div>
+                
+            </div>
+            
+
+            <div class="form-group mb-3">
+                {% if planed_activity %}
+                <label for="activity">Actividad :</label>
+                <input type="text" class="form-control" id="activity" name="activity" required>
+                {% else %}
+                <label for="activity" class="form-label">Actividad realizada:</label>
+                <input class="form-control" list="datalistOptions" id="activity" name="activity" placeholder="Ingresa la actividad"  {% if report.activity %} value="{{report.activity}}" {% endif %}>
+                <datalist id="datalistOptions">
+                    {% for activity in activities %}
+                    <option value="{{activity.name}}">
+                    {% endfor %}
+                </datalist>
+                {% endif %}
+            </div>
+            
+            <div class="form-group mb-3 row">
+                <div class="mb-3 col-md-6">
+                    <label for="date">Fecha:</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{report.date or today}}" required>
+                </div>
+                <div class="form-group mb-3 col-md-3">
+                    <label for="start">Hora inicio</label>
+                    <input type="time" class="form-control" id="start" name="start" value="{{report.start_hour}}" required>
+                </div>
+                <div class="form-group mb-3 col-md-3">
+                    <label for="end">Hora fin:</label>
+                    <input type="time" class="form-control" id="end" name="end" value="{{report.end_hour}}" required>
+                </div>
+            </div>
+
+            <div class="form-group mb-3 row">
+                <div class="mb-3 col-sm-8">
+                    <label for="responsible">Responsable:</label>
+                    <select id="responsible" name="responsible" class="form-select" required>
+                                
+                        {% for user in users %}
+                        
+                            {% if report %}
+                                <option value="{{user.id}}" {% if user.id == report.responsible_id %} selected {% endif %}>{{user.name}}</option>
+                            {% else %}
+                                <option value="{{user.id}}" {% if user.id == current_user.id %} selected {% endif %}>{{user.name}}</option>
+                            {% endif %}
+                        {% endfor %}      
+                    </select>
+                </div>
+                
+                <div class="form-group mb-3 col-sm-4">
+                    <label for="team">N° personas:</label>
+                    <input type="number" class="form-control" id="team" name="team" value="{{report.team}}" required>
+                </div>
+            </div>
+
+
+            <div class="form-group mb-3">
+                <label for="place">Lugar:</label>
+                <input type="text" class="form-control" id="place" name="place" placeholder="Lugar donde se realizó la actividad" {% if report.place %} value="{{report.place}}" {% endif %} required>
+            </div>
+
+            
+
+            <div class="form-group mb-3">
+                <label for="description">Descripción de actividad:</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required>
+                    {% if report.description%}
+                    {{ report.description }}
+                    {% endif %}
+                </textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="files">Selecciona las imagenes</label>
+                <input type="file" class="form-control-file" id="files" name="files" accept="image/*" multiple onchange="thumbs_process()"><br><br>
+            </div>
+            <div class="row" id="imagePreview">
+                
+                <!-- Aquí se añadirán las miniaturas de las imágenes -->
+                 {% for image in report.images %}
+                 <div class="col-sm-3 mb-3">
+                    <div class="text-end">
+                        <button type="button" class="btn btn-close btn-sm" onclick="delete_thumbs(this)"></button>
+                    </div>
+                    <img src="{{ url_for('common.media_report', filename=image.filename) }}" alt="" class="img-thumbnail img-fluid">
+                 </div>
+                    
+                 {% endfor %}
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="notes">Observaciones:</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+
+{% endblock %}

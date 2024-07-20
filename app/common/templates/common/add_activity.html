@@ -3,7 +3,7 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-    {% set href = url_for('pga.pga') %}
+    {% set href = previous_url %}
     {% include "__title.html" %}
 
     {% include "__add_activity_form.html" %}

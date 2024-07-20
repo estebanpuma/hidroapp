@@ -1,5 +1,9 @@
+import os
 from app import create_app
-from config import DevelopmentConfig, configurations
 
-app = create_app(configurations["development"])
+
+settings_module = os.getenv('APP_SETTINGS_MODULE')
+app = create_app(settings_module)
+
+
 

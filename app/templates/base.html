@@ -17,23 +17,34 @@
         {% include "__navbar.html" %}
     </header>
     <main>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="d-none d-md-block col-2">
-                {% include "__nav.html" %}
-            </div>
-            <div class="col">
-                <div class="col-lg-8 mx-auto pt-2">
-                    {% block content %}
-                    {% endblock %}
+        <div class="container-fluid">
+            <div class="row">
+                <div class="d-none d-md-block col-2">
+                    {% include "__nav.html" %}
                 </div>
-                
-            </div>
-            <div class="d-none d-md-block col-2">
-                
-            </div>
-        </div>    
-    </div>
+                <div class="col">
+                    <div class="col-lg-8 mx-auto pt-2">
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" onclick="close_flashed_msg()">
+                                    <span aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        {% block content %}
+                        {% endblock %}
+                    </div>    
+                </div>
+                <div class="d-none d-md-block col-2">
+                 
+                </div>
+            </div>    
+        </div>
         <div style="height: 60px;"></div>
     </main>
     
@@ -41,5 +52,6 @@
         {% include "__footer.html" %}
     </footer>
     <script src="{{ url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/utils.js') }}" crossorigin="anonymous"></script>
 </body>
 </html>

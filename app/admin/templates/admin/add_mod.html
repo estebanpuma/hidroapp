@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{title}}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+    <section name="form" id="form">
+        <form action="" method="post" >
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" name="name" id="name" class="form-control" value="{{ mod.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="name" class="form-label">Código</label>
+                <input type="text" name="code" id="code" class="form-control" value="{{ mod.code }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descripción</label>
+                <textarea name="description" id="description" cols="30" rows="8" class="form-control" placeholder="Descripción">{{ mod.description }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label for="notes" class="form-label">Observaciones</label>
+                <textarea name="notes" id="notes" cols="30" rows="5" class="form-control"  placeholder="Observaciones">{{ mod.notes }}</textarea>
+            </div>
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </section>
+{% endblock %}

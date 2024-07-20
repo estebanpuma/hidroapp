@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    <div class="card mt-5">
+        <div class="card-header bg-light">
+            <div class="card-title">
+                <i class="bi bi-file-earmark-check"> Detalles de la orden de trabajo</i>
+            </div>
+        </div>
+        <div class="card-body">
+            <div>
+                <h5 class="card-subtitle mb-3 text-muted text-end">Código: {{wo.code}}</h5>
+            </div>
+            <div class="row mb-4 border border-1 text-center">
+                <div class="col border border-1">
+                        <i class="bi bi-calendar-week"> Fecha:</i>
+                        <h6 class="mt-2 mb-2 col">{{ wo.date }}</h6>
+                </div>
+                <div class="col border border-1">
+                        <i class="bi bi-clock">Estado:</i>
+                        {% if wo.satus == "Completada" %}
+                        <h6 class="mt-2 mb-2 col bg-succes rounded-pill">{{ wo.status }}</h6>
+                        {% else %}
+                        <h6 class="mt-2 mb-2 col bg-warning rounded-pill">{{ wo.status }}</h6>
+                        {% endif %}
+                        
+                </div>
+                
+                <div class="col-sm-3 border border-1">
+                        <i class="bi bi-person"> Solicitado por:</i>
+                        <h6 class="mt-2 mb-2 col">{{ wo.responsible.name }}</h6>
+                </div>
+            </div>
+            <h2 class="card-title mb-5">{{ wo.activity }}</h2>           
+            <div class="mb-5">
+                <p class="card-text fw-medium">Descripción: </p>
+                <p class="card-text">{{ wo.description }}</p>
+            </div>
+
+            <div class="mb-5">
+                <p class="card-text fw-medium">Reportes: </p>
+                {% if wo.reports %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>Código</th>
+                            <th>Fecha</th>
+                            <th>Actividad</th>
+                        </thead>
+                        <tbody>
+                        {% for report in wo.reports %}
+                            <tr>
+                                <td>
+                                    <a href="{{ url_for('maintenance.maintenance_report', report_id=report.id) }}">
+                                        {{ report.code }}<i class="bi bi-chevron-right"></i>
+                                    </a>
+                                    
+                                </td>
+                                <td>{{ report.date }}</td>
+                                <td>{{ report.activity }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+                {% else %}
+                    <p class="card-text">No se han generado reportes</p>
+                {% endif %}
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a href="" class="btn btn-primary btn-sm me-2"><i class="bi bi-printer"></i>Imprimir</a>
+                <a href="{{ url_for('maintenance.maintenance_report' , code=wo.code) }}" class="btn btn-success btn-sm me-2"><i class="bi bi-file-earmark-plus"></i>Reporte</a>
+                <a href="{{ url_for('maintenance.work_order', wo_id=wo.id) }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
+            </div>
+        </div>
+    </div>
+
+    
+
+{% endblock %}

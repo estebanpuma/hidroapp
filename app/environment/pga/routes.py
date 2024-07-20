@@ -4,22 +4,26 @@ from . import environment_pga_bp
 from .models import PgaActivity, Month, PgaActivityMonth, User, Activity
 from . variables import this_module
 
-from app.utils import get_users_list, already_exist, delete_activity
+from app.utils import get_users_list, already_exist, delete_activity, get_prev_ref
+
+
 
 @environment_pga_bp.route("/pga")
 def pga():
     title = "Programa de Gestión Ambiental"
+    previous_url = get_prev_ref()
     months = Month.query.all()
     
     activities = PgaActivity.query.all()
     
     pga_activity_month = PgaActivityMonth.query.filter_by(year=2024).all()
-
     
     return render_template("pga/pga.html",
                            title = title,
                            months = months,
                            activities = activities,
+                           module = this_module,
+                           previous_url = previous_url,
                            pga_activity_month = pga_activity_month)
     
 
@@ -27,57 +31,23 @@ def pga():
 def env_activities():
     title = "Actividades"
     env_activities = Activity.get_by_module(this_module)
+    previous_url = get_prev_ref()
     
     return render_template("pga/env_activities.html",
                            title = title,
+                           previous_url = previous_url,
                            env_activities = env_activities,
                            module = this_module)
     
 
-@environment_pga_bp.route("/add_activity/<int:activity_id>", methods=["GET", "POST"])
-@environment_pga_bp.route("/add_activity", methods=["GET", "POST"])
-def add_activity(activity_id=None):
-    
-    activity = Activity.query.get(activity_id)
-    error_msg = None
-   
-    title = "Nueva actividad"
-    
-    if request.method == "POST":
-        name = request.form["name"]
-        description = request.form["description"]
-        notes = request.form["notes"]
-        
-        if activity:
-            title = "Editar"
-            activity.name = name
-            activity.description = description
-            activity.notes = notes
-            
-            activity.save()
-            
-        else:
-            
-            if already_exist(Activity, name, this_module):
-                error_msg = f"La actividad: {name} ya existe"
-            n_env_activity = Activity(module= this_module,
-                                      name=name,
-                                      description=description,
-                                      notes=notes)
-            n_env_activity.save()
-        
-        return redirect(url_for('pga.env_activities'))
-   
-    return render_template("pga/add_activity.html",
-                           title = title,
-                           activity = activity,
-                           error_msg = error_msg)
+
     
     
 @environment_pga_bp.route("/add_pga_activity/<int:pga_activity_id>/", methods=["GET", "POST"])
 @environment_pga_bp.route("/add_pga_activity", methods=["GET","POST"])
 def add_pga_activity(pga_activity_id=None):
     title = "Programa de Gestión Ambiental"
+    previous_url = get_prev_ref()
     error_msg = None
     users = get_users_list()
     months = Month.query.all()
@@ -126,6 +96,7 @@ def add_pga_activity(pga_activity_id=None):
             
     return render_template("pga/add_pga_activity.html",
                            title = title,
+                           previous_url = previous_url,
                            activities = activities,
                            pga_activity = pga_activity,
                            error_msg = error_msg,
@@ -157,3 +128,5 @@ def delete_pga_activity(pga_activity_id):
             flash(f"Error al eliminar la actividad PGA: {str(e)}",  "danger")
 
     return redirect(url_for('pga.pga'))
+
+

@@ -4,11 +4,9 @@
 
 {% block content %}
 
-    <div class="row text-center">
-        <h1 class="col-1"><a href=""><i class="bi bi-chevron-left"></i></a></h1>
-        <h1 class="col">{{title}}</h1>
-        <h1 class="col-1"></h1>
-    </div>
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
     <div>
         <a href="{{url_for('admin.add_user')}}">
             <button class="btn btn-primary">Añadir usuario</button>

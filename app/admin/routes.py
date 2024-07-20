@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request
+from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user
 
 from .models import User, Role, Module, RolePermission, Month
@@ -8,7 +8,7 @@ from . import admin_bp
 
 from app import db
 
-
+from app.utils import get_prev_ref, already_exist
 
 from datetime import datetime
 
@@ -19,8 +19,10 @@ def users():
     users = User.query.all()
     print(users)
     title = "Usuarios"
+    previous_url = get_prev_ref()
     return render_template("admin/users.html",
                            title = title,
+                           previous_url = previous_url,
                            users = users)
     
     
@@ -29,7 +31,7 @@ def users():
 def add_user(user_id=None):
     
     title = "Nuevo Usuario"
-    
+    previous_url = get_prev_ref()
     error = None
     roles = Role.query.all()
     print(f"rols {roles}")
@@ -68,6 +70,7 @@ def add_user(user_id=None):
             
     return render_template("admin/add_user.html",
                            title = title,
+                           previous_url = previous_url,
                            error = error,
                            roles = roles)
     
@@ -75,9 +78,11 @@ def add_user(user_id=None):
 @admin_bp.route("/roles")
 def roles():
     title = "Roles"
+    previous_url = get_prev_ref()
     roles = Role.query.all()
     return render_template("admin/roles.html",
                            title = title,
+                           previous_url = previous_url,
                            roles = roles)
     
     
@@ -85,6 +90,7 @@ def roles():
 @admin_bp.route("/add_role", methods=["GET", "POST"])
 def add_role(role_id=None):
     title = "Nuevo rol"
+    previous_url = get_prev_ref()
     role = Role.get_by_id(role_id)
     modules = Module.query.all()
     error = None
@@ -121,6 +127,7 @@ def add_role(role_id=None):
     
     return render_template("admin/add_role.html",
                            title = title,
+                           previous_url = previous_url,
                            role = role,
                            error = error)
     
@@ -128,6 +135,7 @@ def add_role(role_id=None):
 @admin_bp.route("/admin/dashboard")
 def admin_dashboard():
     title = "Dashboard"
+    previous_url = get_prev_ref()
     roles = Role.query.all()
     modules = Module.query.all()
     users = User.query.all()
@@ -136,6 +144,7 @@ def admin_dashboard():
     
     return render_template("admin/admin_dashboard.html",
                            title = title,
+                           previous_url = previous_url,
                            roles = roles,
                            modules = modules,
                            users = users,
@@ -147,6 +156,7 @@ def admin_dashboard():
 @admin_bp.route("/permissions", methods=["GET", "POST"])
 def permissions(role_id, module_id):
     title = "Permisos"
+    previous_url = get_prev_ref()
     role = Role.get_by_id(role_id)
     print(f"Este es el role: {role}")
     module = Module.get_by_id(module_id)
@@ -186,6 +196,7 @@ def permissions(role_id, module_id):
     
     return render_template("admin/permissions.html",
                            title=title,
+                           previous_url = previous_url,
                            role = role,
                            module = module,
                            rp = rp)
@@ -228,27 +239,94 @@ def delete_role(role_id):
     return redirect(url_for("admin.roles"))
 
 
+@admin_bp.route("/add_mod/<int:mod_id>", methods={'GET', 'POST'})
+@admin_bp.route("/add_mod", methods={'GET', 'POST'})
+def add_mod(mod_id=None):
+    title= "Nuevo"
+    previous_url = url_for("admin.mods")
+    mod=None
+    
+    if mod_id:
+        mod = Module.get_by_id(mod_id)
+        title= "Editar"
+    
+        
+    if request.method == 'POST':
+        name = request.form["name"]
+        code = request.form["code"]
+        description = request.form["description"]
+        
+        code = str(code).upper()
+        
+        if mod:
+            #Editar el modulo existente
+            mod.name = name
+            mod.code = code
+            mod.description = description
+            
+        else:
+            if already_exist(Module, name):
+                flash(f'El modulo con nombre: "{name} ya existe', "warning")
+                return redirect(url_for("admin.add_mod"))
+            else:
+                mod = Module(name = name,
+                             code = code,
+                    description = description)
+                
+        print(f"mod.code before save: {mod.code}")        
+        if mod.code is None or mod.code == 'None':
+            mod.code = str(mod.name[0:3]).upper()
+            
+        print(f"mod.code: {mod.code}")
+        print(f"mod.strname: {mod.name[0:2]}")
+        print(mod)
+        mod.save()
+        flash("Módulo guardado correctamente.", "success")
+        return redirect(url_for("admin.mods"))
+        
+    
+    return render_template("admin/add_mod.html", 
+                           mod=mod,
+                           previous_url = previous_url,
+                           title=title)
+    
 @admin_bp.route("/mods")
 def mods():
     title= "Modulos"
-    mods = Module.query.all()
+    previous_url = get_prev_ref()
     return render_template("admin/mods.html", 
-                           mods=mods,
+                           previous_url = previous_url,
                            title=title)
+    
+@admin_bp.route("/delete_mod/<int:mod_id>", methods=["GET", "POST"])
+def delete_mod(mod_id):
+    print(f"mod_id que me pasa: {mod_id}")
+    mod = Module.get_by_id(mod_id)
+    print(mod)
+    if mod:
+        print(f"rol a eliminar: {mod}, {mod.id}")
+        try:
+            mod.delete()
+            flash("Registro eliminado exitosamente", "info")
+        except:
+            flash("Algo salió mal", "error")
+    return redirect(url_for("admin.mods"))
     
 @admin_bp.route("/perm")
 def perm():
     title= "Permisos"
+    previous_url = get_prev_ref()
     perms = RolePermission.query.all()
     return render_template("admin/prm.html", 
                            perms=perms,
+                           previous_url = previous_url,
                            title=title)
     
 
 @admin_bp.before_app_request 
 def set_defaults():
     
-    create_dafult_modules()
+
     
     create_default_roles()
     
@@ -262,21 +340,7 @@ def set_defaults():
     if len(query_months) < 12:
         create_months()
         
-    
-def create_dafult_modules():   
-    #Crear los modulos de la aplicacion
-    mod_names_descriptions = [
-        ("Generacion", "Datos de generacion"),
-        ("Ambiente", "PMA"),
-        ("Seguridad y Salud", "sst"),
-        ("Social", "RSC")
-    ]
-    
-    for name, description in mod_names_descriptions:
-        mod = Module.query.filter_by(name=name).first()
-        if not mod:
-            mod = Module(name=name, description=description)
-            mod.save()
+
     
     
 def create_default_roles():

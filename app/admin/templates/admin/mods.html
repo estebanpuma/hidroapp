@@ -3,35 +3,47 @@
 {% block title %}{{title}}{% endblock %}
 
 {% block content %}
+{% set href = previous_url %}
+    {% include "__title.html" %}
 
-    <div class="col-lg-7">
-        <div class="row">
-            <h1 class="col-1">
-                <i class="bi bi-chevron"></i>
-            </h1>
-            <h1>{{title}}</h1>
-            <h1 class="col-1"></h1>
+        <div>
+            <a class="btn btn-primary" href="{{url_for('admin.add_mod')}}">Add Mod</a>
         </div>
+    
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
-                        <th>id</th>
-                        <th>Name</th>
-                        <th>Descripción</th>
+                        
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Código</th>
+                        <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     {% for mod in mods %}
-                    <tr>
-                        <td>{{mod.id}}</td>
-                        <td>{{mod.name}}</td>
-                        <td>{{mod.description}}</td>
+                    <tr data-id="3" draggable="true">
+                        
+                        <td>
+                            <a href="{{url_for('admin.add_mod', mod_id=mod.id)}}" class="text-decoration-none text-black">{{mod.name}}</a>
+                        </td>
+                        <td>{{mod.code}}</td>
+                
+                        <td class="text-center">           
+                            <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{mod.id}}">
+                                <i class="bi bi-trash"></i><br>                            
+                            </a>
+                            {% set modal_id = mod.id %}
+                            {% set delete_url = url_for('admin.delete_mod', mod_id=mod.id) %}
+                            {% include "__delete_modal.html"%}   
+                            
+                        </td>
+                     
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </div>
+    
 
 {% endblock %}

@@ -1,4 +1,6 @@
 from flask import render_template, redirect, url_for
+
+
 from . import environment_bp
 
 @environment_bp.route("/")

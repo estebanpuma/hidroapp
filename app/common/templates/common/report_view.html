@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href=previous_url %}
+    {% include "__title.html" %}
+
+    <div class="card mt-5">
+        <div class="card-header bg-light">
+            <div class="card-title">
+                <i class="bi bi-file-earmark-check"> Detalles del trabajo</i>
+            </div>
+        </div>
+        <div class="card-body">
+            <div>
+                <h5 class="card-subtitle mb-3 text-muted text-end">Código: {{report.code}}</h5>
+            </div>
+            <div class="row mb-3 border border-1 text-center">
+                <div class="col border border-1">
+                        <i class="bi bi-calendar-week"> Fecha:</i>
+                        <h6 class="mt-2 mb-2 col">{{ report.date }}</h6>
+                </div>
+                <div class="col border border-1">
+                        <i class="bi bi-clock"> Hora inicio:</i>
+                        <h6 class="mt-2 mb-2 col ">{{ report.start_hour }}</h6>
+                </div>
+                <div class="col border border-1">
+                        <i class="bi bi-clock"> Hora fin:</i>
+                        <h6 class="mt-2 mb-2 col">{{ report.end_hour }}</h6>
+                    </div>
+                <div class="col-sm-3 border border-1">
+                        <i class="bi bi-person"> Responsable:</i>
+                        <h6 class="mt-2 mb-2 col">{{ report.responsible.name }}</h6>
+                </div>
+            </div>
+            <h2 class="card-title mb-2">{{ report.activity }}</h2>
+            <h5 class="card-subtitle mb-3 text-muted"><i class="bi bi-box"></i> Módulo: {{ report.module.name }}</h5>
+ 
+            
+                
+            
+            <h5 class="card-subtitle mb-5 col"><i class="bi bi-geo-alt"></i> Lugar: {{ report.place }}</h5>
+            <div class="mb-3">
+                <p class="card-text fw-medium">Descripción: </p>
+                <p class="card-text">{{ report.description }}</p>
+            </div>
+            <div class="mb-3">
+                <p class="card-text fw-medium">Observaciones: </p>
+                <p class="card-text">{{ report.notes }}</p>
+            </div>
+            <div class="mb-5">
+                <p class="card-text fw-medium">Registro fotográfico: </p>
+                <div class="row">
+                    {% for image in report.images %}
+                        <img src="{{ url_for('common.media_report', filename=image.filename) }}" alt="" class="img-fluid col-sm-4">
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <a href="" class="btn btn-primary btn-sm me-2"><i class="bi bi-printer"></i>Imprimir</a>
+                <a href="{{url_for('common.report', report_id=report.id)}}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

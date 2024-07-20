@@ -4,13 +4,18 @@
 
 {% block content %}
 
-    {% set href = url_for('environment.environment') %}
+    {% set href = previous_url %}
     {% include "__title.html" %}
    
     {% include "__flash_msg.html" %}
 
     <div class="mb-3">
         <a href="{{url_for('pga.add_pga_activity')}}" class="text-ligth">
+            <button class="btn btn-primary">
+                <i class="bi bi-plus-circle">Nueva actividad</i>
+            </button>
+        </a>
+        <a href="{{url_for('common.add_activity', module=module)}}" class="text-ligth">
             <button class="btn btn-primary">
                 <i class="bi bi-plus-circle">Nueva actividad</i>
             </button>
@@ -39,7 +44,7 @@
                 {% for activity in activities %}
                 <tr>
                     <td>
-                        <a href="{{url_for('pga.add_pga_activity', pga_activity_id=activity.id)}}" class="text-decoration-none">{{activity.activity.name}}</a>
+                        <a href="{{url_for('common.activity', module=module, activity_id= activity.id)}}" class="text-decoration-none">{{activity.activity.name}}</a>
                     </td>
                     {% for month in months %}
                     <td>
@@ -47,11 +52,11 @@
                             
                             {% if activity_month.id == month.id %}
                                 {% if activity_month.is_done %}
-                                <div class="bg-succes">
+                                <div class="bg-succes rounded-2">
                                     x
                                 </div> 
                                 {% else %}
-                                <div class="bg-secondary text-secondary">
+                                <div class="bg-primary text-primary rounded-2">
                                     x
                                 </div>
                                 {% endif %}

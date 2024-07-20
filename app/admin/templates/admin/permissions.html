@@ -3,16 +3,10 @@
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-<div class="row text-center">
-    <h1 class="col-1">
-        <a href="{{ url_for('admin.admin_dashboard')}}">
-            <i class="bi bi-chevron-left"></i>
-        </a>
-    </h1>
-    <h1 class="col text-primary-emphasis">{{ title }}</h1>
-    <h1 class="col-1"></h1>
 
-</div>
+{% set href = previous_url %}
+{% include "__title.html" %}
+
 <div class="row justify-content-center mt-5">
     <div class="col-lg-7">
         <div class="row mb-3">

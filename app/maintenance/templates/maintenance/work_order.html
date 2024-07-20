@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    <h2>OT</h2>
+    <form action="" method="post" >
+        <div class="mb-3">
+            <label for="date">Fecha:</label>
+            <input class="form-control" type="date" name="date" id="date" value="{{ today }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="responsible">Solicitante:</label>
+            <select name="responsible_id" id="responsible_id" class="form-select">
+                {% for user in users %}
+                    {% if work_order.responsible_id %}
+                    <option value="{{ user.id }}" {% if user.id == work_order.responsible_id %} selected {% endif %}>{{ user.name }}</option>
+                    {% else %}
+                    <option value="{{ user.id }}" {% if user.id == current_user.id %} selected {% endif %}>{{ user.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="activity">Actividad:</label>
+            <input class="form-control" type="text" name="activity" id="activity" value="{{work_order.activity}}" required>
+        </div>
+        <div class="mb-3">
+            <label for="description">Descripción:</label>
+            <textarea class="form-control" id="description" name="description" rows="3">
+                {% if work_order.description %}{{ work_order.description }}{% endif %}
+            </textarea>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+
+{% endblock %}

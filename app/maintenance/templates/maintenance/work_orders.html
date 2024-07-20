@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <th scope="col">Código</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Actividad</th>
+                <th scope="col">Estado</th>
+                <th></th>
+            </thead>
+            <tbody>
+                {% for wo in work_orders %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-secondary ">
+                            
+                            {{ wo.code }}<i class="bi bi-chevron-right"></i> 
+                        </a>
+                    </td>
+                    <td>{{ wo.date }}</td>
+                    <td>{{ wo.activity }}</td>
+                    <td>{{ wo.status }}</td>
+                    <td>
+                    
+                        <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{wo.id}}">
+                            <i class="bi bi-trash"></i><br>                            
+                        </a>
+                        {% set modal_id = wo.id %}
+                        {% set delete_url = url_for('maintenance.delete_work_order', wo_id=wo.id) %}
+                        {% include "__delete_modal.html"%}   
+                    
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    <div class="table-responsive">
+    <div >
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Actividad</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <td>
+                        
+                        <a href="{{ url_for('maintenance.maintenance_report_view', report_id=report.id)}}" class="text-decoration-none text-secondary">
+                            {{ report.code }} <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </td>
+                    <td>{{ report.date }}</td>
+                    <td>{{ report.activity }}</td>
+                    <td>
+                        <a href=""><i class="bi bi-trash"></i></a>
+                    </td>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
