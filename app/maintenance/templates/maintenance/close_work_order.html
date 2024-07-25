@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    <h2>Cerrar orden de trabajo</h2>
+    <form action="" method="post" >
+        <div class="mb-3">
+            <label for="date">Fecha fin:</label>
+            <input class="form-control" type="date" name="date" id="date" value="{{ today }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="close_responsible">Responsable:</label>
+            <select name="close_responsible" id="close_responsible" class="form-select">
+                {% for user in users %}
+                    <option value="{{ user.name }}" {% if user.id == current_user.id %} selected {% endif %}>{{ user.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="notes">Observaciones:</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3">
+                {% if work_order.notes %}{{ work_order.notes }}{% endif %}
+            </textarea>
+        </div>
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+    </form>
+
+{% endblock %}

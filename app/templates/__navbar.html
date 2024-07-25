@@ -17,18 +17,12 @@
                             <i class="bi-plus-square" style="font-size: 1.5rem"></i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li class="dropdown-item">
-                                <a href="{{url_for('common.reports')}}">Reportes</a>
+                            {% if current_user.role.name == "Operador" %}
+                            <li >
+                                <a class="dropdown-item" href="{{url_for('maintenance.work_order')}}">Orden de trabajo</a>
                             </li>
-                            <li class="dropdown-item">
-                                <a href="{{url_for('maintenance.work_orders')}}">Ots</a>
-                            </li>
-                            <li class="dropdown-item">
-                                <a href="{{url_for('maintenance.work_order')}}">Nueva Ot</a>
-                            </li>
-                            <li class="dropdown-item">
-                                <a href="{{url_for('maintenance.maintenance')}}">RM</a>
-                            </li>
+                            {% endif %}
+                            
                             {% for mod in mods %}
                                 <li>
                                     <a href="{{ url_for('common.report', mod_id=mod.id) }}" class="dropdown-item">{{mod.name}}</a>
@@ -59,6 +53,9 @@
                             {% if current_user.is_authenticated %}
                                 <li><a class="dropdown-item" href="#">{{ current_user.name }} </a></li>
                                 <li><a class="dropdown-item" href="#" >Perfil</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('common.reports')}}">Reportes</a></li>
+                                <li><a class="dropdown-item" href="{{url_for('maintenance.work_orders')}}">Ordenes de trabajo</a></li>
+
                                 {% if current_user.name == "admin" %}
                                     <li><a class="dropdown-item" href="{{ url_for('admin.admin_dashboard') }}">Dashboard</a></li>
                                     <li><a class="dropdown-item" href="{{ url_for('admin.roles') }}">Roles</a></li>

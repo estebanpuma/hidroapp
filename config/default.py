@@ -15,6 +15,13 @@ APP_ENV_STAGING = 'staging'
 APP_ENV_PRODUCTION = 'production'
 APP_ENV = ''
 
+
+#media dir
 MEDIA_DIR = join(BASE_DIR, 'media')
 REPORT_IMAGES_DIR = join(MEDIA_DIR, 'reports')
+MAINTENANCE_IMAGES_DIR = join(MEDIA_DIR, "maintenance")
 ALLOWED_IMAGES_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+#server port
+HOST = '0.0.0.0'
+PORT = 5000

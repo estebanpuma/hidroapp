@@ -7,7 +7,7 @@
     {% include "__title.html" %}
 
     <div class="table-responsive">
-    <div >
+    
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -19,17 +19,20 @@
             </thead>
             <tbody>
                 {% for report in reports %}
+                <tr>
                     <td>
                         
-                        <a href="{{ url_for('maintenance.maintenance_report_view', report_id=report.id)}}" class="text-decoration-none text-secondary">
+                        <a href="{{ url_for('common.report_view', report_id=report.id)}}" class="text-decoration-none text-secondary">
                             {{ report.code }} <i class="bi bi-chevron-right"></i>
                         </a>
                     </td>
                     <td>{{ report.date }}</td>
                     <td>{{ report.activity }}</td>
                     <td>
-                        <a href=""><i class="bi bi-trash"></i></a>
+                        <a href="{{ url_for('common.delete_report', report_id = report.id) }}"><i class="bi bi-trash"></i></a>
                     </td>
+                </tr>
+                    
 
                 {% endfor %}
             </tbody>

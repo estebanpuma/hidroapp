@@ -23,8 +23,8 @@
                                     {{ report.code }} <i class="bi bi-chevron-right"></i>
                                 </a>
                             </td>               
-                            <td>{{ report.activity }}</td>
-                            <td>{{ report.date }}</td>
+                            <td>{{ report.details.activity }}</td>
+                            <td>{{ report.details.date }}</td>
                             <td>                                   
                                 <a class="col text-center text-decoration-none text-secondary" href="{{url_for('common.delete_report', report_id=report.id)}}">
                                     <div>

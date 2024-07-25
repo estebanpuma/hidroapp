@@ -8,8 +8,8 @@
     {% include "__title.html" %}
 
     <div>
-        <a href="{{url_for('admin.add_user')}}">
-            <button class="btn btn-primary">Añadir usuario</button>
+        <a href="{{url_for('admin.add_user')}}" class="btn btn-primary">
+            <i class="bi bi-person-plus"> Nuevo</i>
         </a>
     </div>
     <div class="table-responsive">
@@ -18,51 +18,29 @@
                 <tr>
                     <th scope="col">Nombre</th>
                     <th scope="col">Rol</th>
-                    <th scope="col">email</th>
-                    <th scope="col">Fecha de nacimiento</th>
-                    <th scope="colgroup" colspan="2">Acción</th>
+                    <th scope="colgroup" colspan="2"></th>
                 </tr>
             </thead>
             <tbody>
                 {% for user in users %}
                 <tr>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.role.name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.birth }}</td>
                     <td>
-                        <a href="{{url_for('admin.add_user', user_id=user.id)}}" class="text-decoration-none">
-                            <button class="btn btn-sm btn-primary">
-                                <div><i class="bi bi-pencil"></i></div>
-                                <div><small>Editar</small></div>
-                            </button>
+                        <a href="{{url_for('admin.add_user', user_id=user.id)}}" class="text-secondary text-decoration-none">
+                            {{ user.name }}<i class="bi bi-chevron-right"></i>
                         </a>
                         
                     </td>
+                    <td>{{ user.role.name }}</td>
                     <td>
-                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                            <div><i class="bi bi-x-lg"></i></div>
-                            <div><small>Borrar</small></div>
-                        </button>
-
-                        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                              <div class="modal-content">
-                                <div class="modal-header">
-                                  <h1 class="modal-title fs-5" id="deleteModalLabel">Eliminar registro</h1>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                  Esta seguro que desea eliminar este registro permanentemente?
-                                </div>
-                                <div class="modal-footer">
-                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                  <a href="{{url_for('admin.delete_user', user_id=user.id)}}"><button type="button" class="btn btn-danger" >Eliminar</button></a>
-                                  
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                    </td>
+                    <td>
+                        <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{user.id}}">
+                            <i class="bi bi-trash"></i><br>                            
+                        </a>
+                        {% set modal_id = user.id %}
+                        {% set delete_url = url_for('admin.delete_user', user_id=user.id) %}
+                        {% include "__delete_modal.html"%} 
+                        
                     </td>
 
                 </tr>

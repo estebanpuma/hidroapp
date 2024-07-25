@@ -25,22 +25,21 @@
             <tbody>
                 {% for role in roles %}
                 <tr>
-                    <td>{{role.id}}</td>
-                    <td>{{role.name}}</td>
-                    <td>{{role.description}}</td>
                     <td>
-                        <a href="{{url_for('admin.add_role', role_id=role.id)}}">
-                        <button class="btn btn-primary" type="button" >
-                            <div><i class="bi bi-pencil"></i></div>
-                            <div><small>Editar</small></div>
-                        </button>
-                        </a>
+                        {{role.id}}
                     </td>
                     <td>
-                        <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal-{{role.id}}">
-                            <div><i class="bi bi-x-lg"></i></div>
-                            <div><small>Borrar</small></div>
-                        </button>
+                        <a href="{{url_for('admin.add_role', role_id=role.id)}}" class="text-secondary text-decoration-none">
+                            {{role.name}}<i class="bi bi-chevron-right"></i>
+                        </a>
+                    </td>
+                    <td>{{role.description}}</td>
+                    <td>
+                    </td>
+                    <td>
+                        <a class="text-secondary text-decoration-none" data-bs-toggle="modal" data-bs-target="#deleteModal-{{role.id}}">
+                            <i class="bi bi-trash"></i>
+                        </a>
                         {% set modal_id = role.id %}
                         {% set delete_url = url_for('admin.delete_role', role_id=role.id) %}
                         {% include "__delete_modal.html"%}

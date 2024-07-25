@@ -1,4 +1,4 @@
-from flask import Flask, g
+from flask import Flask, g, request, redirect
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -17,7 +17,7 @@ def create_app(config):
     
     login_manager.init_app(app)
     login_manager.login_view = "public.login"
-    
+
     
     @app.before_request
     def before_request():
@@ -48,6 +48,9 @@ def create_app(config):
     from .users import users_bp
     app.register_blueprint(users_bp, url_prefix="/users")
     
+    from .ops import ops_bp
+    app.register_blueprint(ops_bp)
+    
     from .environment import environment_bp
     app.register_blueprint(environment_bp, url_prefix="/environment")
     
@@ -62,6 +65,9 @@ def create_app(config):
     
     from .maintenance import maintenance_bp
     app.register_blueprint(maintenance_bp, url_prefix="/maintenance")
+    
+    from .sst import sst_bp
+    app.register_blueprint(sst_bp)
     
     return app
 

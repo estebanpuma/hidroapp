@@ -1,10 +1,10 @@
-from flask import redirect, url_for, request, current_app
+from flask import redirect, url_for, request, current_app, render_template, send_file, make_response
 from flask_login import current_user
 from werkzeug.utils import secure_filename
 from app.common.datetime_format import *
 import os
-from datetime import datetime, time
 import uuid
+
 
 def get_users_list():
     from app.admin.models import User
@@ -83,8 +83,7 @@ def allowed_file(filename):
            
 def save_images(dir, file, obj_class, report_id):
     
-    from app.maintenance.models import MaintenanceImages
-    print("infresa a funcion")
+    print("infresa a funcion", obj_class)
     filename = str(get_timestamp())[6:]+".jpeg"
     filename = secure_filename(filename)
     existing_file = obj_class.query.filter_by(filename=filename).first()
@@ -94,7 +93,11 @@ def save_images(dir, file, obj_class, report_id):
     os.makedirs(file_dir, exist_ok=True)
     file_path = os.path.join(file_dir, filename)
     file.save(file_path)
-    print(f"se suipone guarda el path: {file_path}")
+    print(f"se suipone guarda el path: {file_path} con report_id = {report_id}")
     n_file = obj_class(report_id = report_id,
                         filename = filename)
     n_file.save()
+    
+    
+    
+

@@ -14,7 +14,7 @@
                 <th scope="col">Fecha</th>
                 <th scope="col">Actividad</th>
                 <th scope="col">Estado</th>
-                <th></th>
+                <th scope="col" colspan="2"></th>
             </thead>
             <tbody>
                 {% for wo in work_orders %}
@@ -28,6 +28,7 @@
                     <td>{{ wo.date }}</td>
                     <td>{{ wo.activity }}</td>
                     <td>{{ wo.status }}</td>
+                    <td></td>
                     <td>
                     
                         <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{wo.id}}">
