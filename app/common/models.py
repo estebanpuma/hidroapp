@@ -98,13 +98,19 @@ class WorkOrder(db.Model, BaseModel):
     code = db.Column(db.String(128), nullable=False, unique=True)
     activity = db.Column(db.String(128), nullable=False)
     description = db.Column(db.Text)
-    date = db.Column(db.Date)
+    request_date = db.Column(db.Date)
     end_date = db.Column(db.Date)
     status = db.Column(db.String(64), default='Abierta')
     close_responsible = db.Column(db.String(128))
+    notes = db.Column(db.Text)
+    priority_level = db.Column(db.String(128))
     
     responsible_id = db.Column(db.Integer, db.ForeignKey('app_users.id'))
-    responsible = db.relationship('User', backref='work_orders')
+    responsible = db.relationship('User', foreign_keys=[responsible_id], backref='work_orders')
+    
+    assigned_personnel_id = db.Column(db.Integer, db.ForeignKey('app_users.id'))
+    assigned_personnel = db.relationship('User', foreign_keys=[assigned_personnel_id], backref='work_orders_assigned')
+    
     
     mod_id = db.Column(db.Integer, db.ForeignKey('modules.id'))
     module = db.relationship("Module", back_populates="work_orders")
@@ -237,4 +243,32 @@ class MaintenanceSpareParts(db.Model, BaseModel):
     spare_part = db.Column(db.String(100))
     maintenance_detail = db.relationship("MaintenanceDetails", back_populates="spare_parts_list")
    
-   
+
+class ToiletReg(db.Model, BaseModel):
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date)
+    hour = db.Column(db.Time)
+    place = db.Column(db.String(68))
+    notes = db.Column(db.Text)
+
+    img = db.relationship("ToiletRegImg",  cascade="all, delete-orphan")
+    
+    
+class ToiletRegImg(db.Model, BaseModel):
+    id = db.Column(db.Integer, primary_key=True)
+    reg_id = db.Column(db.Integer, db.ForeignKey("toilet_reg.id"))
+    filename = db.Column(db.String, unique=True)
+    
+    def delete(self):
+        # Eliminar la imagen física
+        if self.filename:
+            try:
+                image_full_path = os.path.join(current_app.config['TOILET_IMAGES_DIR'], self.filename) 
+                os.remove(image_full_path)
+                print(f"Image {image_full_path} deleted successfully.")
+            except OSError as e:
+                print(f"Error deleting image {image_full_path}: {e}")
+        
+        # Eliminar el registro de la base de datos
+        db.session.delete(self)
+        db.session.commit()

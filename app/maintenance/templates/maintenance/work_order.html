@@ -8,12 +8,12 @@
 
     <h2>OT</h2>
     <form action="" method="post" >
-        <div class="mb-3">
+        <div class="mb-3" class="form-label">
             <label for="date">Fecha:</label>
             <input class="form-control" type="date" name="date" id="date" value="{{ today }}" required>
         </div>
         <div class="mb-3">
-            <label for="responsible">Solicitante:</label>
+            <label for="responsible" class="form-label">Solicitante:</label>
             <select name="responsible_id" id="responsible_id" class="form-select">
                 {% for user in users %}
                     {% if work_order.responsible_id %}
@@ -25,14 +25,24 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="activity">Actividad:</label>
+            <label for="mod" class="form-label">Módulo</label>
+            <select name="mod" id="mod" class="form-select" required>
+                <option selected disabled value>Selecciona un módulo</option>
+                {% for mod in mods %}
+                    {% if work_order.mod_id %}
+                        <option value="{{mod.id}}" {% if mod.id == work_order.mod_id %} selected {% endif %}>{{ mod.name }}</option>
+                    {% endif %}
+                    <option value="{{mod.id}}">{{ mod.name }}</option>
+                {% endfor%}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="activity" class="form-label">Actividad:</label>
             <input class="form-control" type="text" name="activity" id="activity" value="{{work_order.activity}}" required>
         </div>
         <div class="mb-3">
-            <label for="description">Descripción:</label>
-            <textarea class="form-control" id="description" name="description" rows="3">
-                {% if work_order.description %}{{ work_order.description }}{% endif %}
-            </textarea>
+            <label for="description" class="form-label">Descripción:</label>
+            <textarea class="form-control" id="description" name="description" rows="3">{% if work_order.description %}{{ work_order.description }}{% endif %}</textarea>
         </div>
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">Guardar</button>

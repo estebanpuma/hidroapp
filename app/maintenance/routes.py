@@ -1,6 +1,6 @@
 
 from flask import render_template, url_for, redirect, request, flash, current_app, send_from_directory
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app.common.models import Report, Module, WorkOrder
 from app.admin.models import User
@@ -25,14 +25,16 @@ def maintenance():
     
 
 @maintenance_bp.route("/OTs")
+@login_required
 def work_orders():
     title = "Ordenes de trabajo"
     previous_url = get_prev_ref()
     nr = request.args.get("report")
+    man = Module.query.filter_by(code="MAN").first()
     if nr:
-        work_orders = WorkOrder.query.filter_by(status="Abierta")
+        work_orders = WorkOrder.query.filter_by(status="Abierta", mod_id=man.id).order_by(WorkOrder.id.desc()).all()
     else:
-        work_orders = WorkOrder.query.all()
+        work_orders = WorkOrder.query.order_by(WorkOrder.id.desc()).all()
     
     
     return render_template("maintenance/work_orders.html",
@@ -42,6 +44,7 @@ def work_orders():
     
 
 @maintenance_bp.route("/OT/view/<int:wo_id>")
+@login_required
 def work_order_view(wo_id):
     title = "Orden de trabajo"
     previous_url = get_prev_ref()
@@ -63,30 +66,29 @@ def work_order_view(wo_id):
     
 @maintenance_bp.route("/OT/<int:wo_id>", methods=["GET", "POST"])
 @maintenance_bp.route("/OT", methods=["GET", "POST"])
+@login_required
 def work_order(wo_id=None):
     title = "Orden de trabajo"
     previous_url = get_prev_ref()
     work_order = None
     today = get_today()
-    print(today)
     users = get_users_list()
+    mods = Module.query.all()
     
     if wo_id:
         work_order = WorkOrder.query.get_or_404(wo_id)
         print(work_order.activity)
     if request.method == "POST":
         date = request.form.get('date')
-        date = format_datetime(date)
+        request_date = format_datetime(date)
         activity = request.form.get("activity")
         description = request.form.get('description')
         responsible_id = request.form.get("responsible_id")
+        mod_id = request.form.get("mod")
         
-        #######ooooojao solo mantenimiento por el momento
-        mod = Module.query.filter_by(code="MAN").first()
-        mod_id = mod.id
         
         if work_order:
-            work_order.date = date
+            work_order.request_date = request_date
             work_order.activity = activity
             work_order.description = description
             work_order.responsible_id = responsible_id
@@ -94,7 +96,7 @@ def work_order(wo_id=None):
             
         else:
             work_order = WorkOrder(mod_id = mod_id,
-                                    date = date,
+                                    request_date = request_date,
                                     responsible_id = responsible_id,
                                     activity = activity,
                                     description = description)
@@ -113,10 +115,12 @@ def work_order(wo_id=None):
                            previous_url = previous_url,
                            work_order = work_order,
                            users = users,
-                           today = today)
+                           today = today,
+                           mods = mods)
     
 
 @maintenance_bp.route("/close_ot/<int:wo_id>", methods=["GET", "POST"])
+@login_required
 def close_work_order(wo_id):
     title = "OT"
     previous_url = get_prev_ref()
@@ -149,6 +153,7 @@ def close_work_order(wo_id):
 
 
 @maintenance_bp.route("/delete_work_order/<int:wo_id>")
+@login_required
 def delete_work_order(wo_id):
     if wo_id:
         try:

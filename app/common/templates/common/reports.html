@@ -13,7 +13,7 @@
                     <th scope="col">Código</th>                 
                     <th scope="col">Actividad</th>
                     <th scope="col">Fecha</th>
-                    <th scope="col" colspan="2">Acción</th>
+                    <th scope="col" colspan="2"></th>
                 </tr>
                 <tbody>
                     {% for report in reports %}
@@ -25,12 +25,14 @@
                             </td>               
                             <td>{{ report.details.activity }}</td>
                             <td>{{ report.details.date }}</td>
-                            <td>                                   
-                                <a class="col text-center text-decoration-none text-secondary" href="{{url_for('common.delete_report', report_id=report.id)}}">
-                                    <div>
-                                        <i class="bi bi-trash"></i>
-                                    </div>
-                                </a>                    
+                            <td></td>
+                            <td>
+                                <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{report.id}}">
+                                    <i class="bi bi-trash"></i><br>                            
+                                </a>
+                                {% set modal_id = report.id %}
+                                {% set delete_url = url_for('common.delete_report', report_id=report.id) %}
+                                {% include "__delete_modal.html"%}                                                     
                             </td>                            
                         </tr>
                     {% endfor %}    

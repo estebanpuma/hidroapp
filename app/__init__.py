@@ -1,4 +1,4 @@
-from flask import Flask, g, request, redirect
+from flask import Flask, g, request, redirect, render_template
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -16,7 +16,7 @@ def create_app(config):
 
     
     login_manager.init_app(app)
-    login_manager.login_view = "public.login"
+    login_manager.login_view = "auth.login"
 
     
     @app.before_request
@@ -69,6 +69,9 @@ def create_app(config):
     from .sst import sst_bp
     app.register_blueprint(sst_bp)
     
+    # Custom error handlers
+    register_error_handlers(app)
+    
     return app
 
 
@@ -76,3 +79,16 @@ def fetch_modules():
     # Aquí puedes implementar la lógica para obtener los módulos disponibles desde la base de datos o de donde sea necesario
     from app.common.models import Module
     return Module.query.all()
+
+
+def register_error_handlers(app):
+    
+    @app.errorhandler(500)
+    def base_error_handler(e):
+        return render_template("500.html"), 500
+    
+    @app.errorhandler(404)
+    def error_404_handler(e):
+        return render_template("404.html"), 404
+        
+        

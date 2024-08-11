@@ -18,8 +18,10 @@ APP_ENV = ''
 
 #media dir
 MEDIA_DIR = join(BASE_DIR, 'media')
+TOILET_IMAGES_DIR = join(BASE_DIR, 'toilet')
 REPORT_IMAGES_DIR = join(MEDIA_DIR, 'reports')
 MAINTENANCE_IMAGES_DIR = join(MEDIA_DIR, "maintenance")
+TEMP_DIR = join(MEDIA_DIR, 'temp')
 ALLOWED_IMAGES_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 #server port

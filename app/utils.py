@@ -1,9 +1,13 @@
-from flask import redirect, url_for, request, current_app, render_template, send_file, make_response
-from flask_login import current_user
-from werkzeug.utils import secure_filename
-from app.common.datetime_format import *
 import os
+
+from flask import url_for, request, current_app
+
+from werkzeug.utils import secure_filename
+
 import uuid
+
+from app.common.datetime_format import *
+
 
 
 def get_users_list():
@@ -82,7 +86,7 @@ def allowed_file(filename):
            
            
 def save_images(dir, file, obj_class, report_id):
-    
+  
     print("infresa a funcion", obj_class)
     filename = str(get_timestamp())[6:]+".jpeg"
     filename = secure_filename(filename)

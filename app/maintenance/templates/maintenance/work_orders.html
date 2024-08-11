@@ -25,9 +25,16 @@
                             {{ wo.code }}<i class="bi bi-chevron-right"></i> 
                         </a>
                     </td>
-                    <td>{{ wo.date }}</td>
+                    <td>{{ wo.request_date }}</td>
                     <td>{{ wo.activity }}</td>
-                    <td>{{ wo.status }}</td>
+                    <td>
+                        {% if wo.status == "Abierta" %}
+                        <span class="badge rounded-pill text-bg-success">{{ wo.status }}</span>
+                        {% else %}
+                        <span class="badge rounded-pill text-bg-secondary">Cerrada</span>
+                        {% endif %}
+                        
+                    </td>
                     <td></td>
                     <td>
                     

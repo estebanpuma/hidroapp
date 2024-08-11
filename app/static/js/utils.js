@@ -1,7 +1,33 @@
-function delete_thumbs(button) {
-    const thumbnail = button.parentNode.parentNode;
-    thumbnail.parentNode.removeChild(thumbnail)
+async function delete_thumbs(button) {
+
+    const imageId = button.getAttribute('data-id');
+            
+        if (!imageId) {
+            console.error('ID de imagen no encontrado.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/delete_image_report/${imageId}/`, {
+                method: 'DELETE', // Método DELETE para eliminar
+                headers: {
+                    'Content-Type': 'application/json',
+                    
+                }
+            });
+            if (response.ok) {
+                // Eliminar el elemento del DOM si la eliminación en el servidor fue exitosa
+                button.parentNode.remove();
+            } else {
+                console.error('Error al eliminar la imagen:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+        }
     
+
+   
+
 };
 
 function thumbs_process(){

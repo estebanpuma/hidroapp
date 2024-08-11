@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    
+        <h2 class="mb-4">Reporte de Trabajo</h2>
+        <form method="POST" action="" enctype="multipart/form-data" id="uploadForm">
+            
+            {% if report.work_order_id %}
+                <div class="form-group">
+                    <div class="form-group mb-3">
+                        <label for="wo" class="form-label">Orden de mantenimiento:</label>
+                        <input type="text" name="wo" id="wo" value="{{ report.work_order.code }}" disabled class="form-control">
+                        <input type="text" name="wo_code" id="wo_code" value="{{ report.work_order.code }}" readonly class="form-control" hidden>
+                    </div>
+    
+                    <div class="form-group mb-3">
+                        <label for="mod" class="form-label">Módulo:</label>
+                        <input type="text" name="" id="" class="form-control" value="{{ report.module.name }}" disabled>
+                        <input type="text" name="mod" id="mod" class="form-control" value="{{ report.module.name }}" readonly hidden>
+                    </div>
+    
+                    <div class="form-group mb-3">
+                        <label for="a" class="form-label">Actividad:</label>
+                        <input type="text" name="a" id="a" value="{{ report.details.activity }}"  disabled class="form-control"> 
+                        <input type="text" name="activity" id="activity" value="{{ report.details.activity }}"  readonly class="form-control" hidden> 
+                    </div>
+                </div>   
+
+            {% else %}
+
+                <div class="form-group mb-3">
+                    <label for="mod" class="form-label">Módulo</label>
+                    <select name="mod" id="mod" class="form-select" required>
+                        {% for mod in mods %}
+                            <option value="{{mod.id}}" {% if mod.id == report.mod_id %} selected {% endif %}>{{ mod.name }}</option>
+                        {% endfor%}
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="activity" class="form-label">Actividad:</label>
+                    <input type="text" name="activity" id="activity" value="{{ report.details.activity }}" class="form-control"> 
+                </div>
+
+            {% endif %}
+
+            <div class="form-group mb-3 row">
+                <div class="mb-3 col-md-6">
+                    <label for="date" class="form-label">Fecha:</label>
+                    <input type="date" class="form-control" id="date" name="date" value="{{ report.details.date }}" required>
+                </div>
+                <div class="form-group mb-3 col-md-3">
+                    <label for="start_hour" class="form-label">Hora inicio</label>
+                    <input type="time" class="form-control" id="start_hour" name="start_hour" value="{{ report.details.start_hour }}" required>
+                </div>
+                <div class="form-group mb-3 col-md-3">
+                    <label for="end_hour" class="form-label">Hora fin:</label>
+                    <input type="time" class="form-control" id="end_hour" name="end_hour" value="{{ report.details.end_hour }}" required>
+                </div>
+            </div>
+
+            <div class="form-group mb-3 row">
+                <div class="mb-3 col-sm-8">
+                    <label for="responsible_id" class="form-label">Responsable:</label>
+                    <select id="responsible_id" name="responsible_id" class="form-select" required>
+                                
+                        {% for user in users %}
+
+                            <option value="{{user.id}}" {% if user.id == report.details.responsible_id %} selected {% endif %}>{{user.name}}</option>
+    
+                        {% endfor %}      
+                    </select>
+                </div>
+                
+                <div class="form-group mb-3 col-sm-4">
+                    <label for="team" class="form-label">N° personas:</label>
+                    <input type="number" class="form-control" id="team" name="team" value="{{ report.details.team }}"  required>
+                </div>
+            </div>
+
+            
+
+            <div class="form-group mb-3">
+                <label for="description" class="form-label">Descripción de actividad:</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required>{{ report.details.description }}</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="files" class="form-label">Selecciona las imagenes</label>
+                <input type="file" class="form-control" id="files" name="files" accept="image/*"  multiple onchange="thumbs_process()"><br><br>
+            </div>
+            <div class="row" id="imagePreview">
+                {% for image in images %}
+                    <div class="col-sm-4  position-relative ">
+                        <img src="{{ url_for('common.media_report', filename=image.filename) }}" alt="" class="img-fluid">
+                        <button 
+                            onclick="delete_thumbs(this)" 
+                            type="button" class="btn-close position-absolute top-0 end-0 px-3" 
+                            aria-label="Close"
+                            data-id="{{ image.id }}">    
+                        </button>
+                    </div>
+                    
+                {% endfor %}
+            </div>
+            <div class="form-group mb-3">
+                <label for="notes" class="form-label">Observaciones:</label>
+                <textarea class="form-control" id="notes" name="notes" rows="3">{{ report.details.notes }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+
+{% endblock %}
