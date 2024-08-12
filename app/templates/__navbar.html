@@ -26,23 +26,25 @@
                                 <a href="{{ url_for('common.report', mod_id=mod.id) }}" class="dropdown-item">{{mod.name}}</a>
                             </li>                           
                         {% endfor %}
+
+                    {% else %}
+                    
+                        {% for mod in mods %}
+                            
+                            {% if mod.code != "GEN" %}
+                                {% if current_user.role.name == "Ayudante de operación" and mod.code != "RSC" %}
+                                    <li>
+                                        <a href="{{ url_for('common.report', mod_id=mod.id) }}" class="dropdown-item">{{mod.name}}</a>
+                                    </li>
+                                {% elif current_user.role.name != "Ayudante de operación" %}
+                                    <li>
+                                        <a href="{{ url_for('common.report', mod_id=mod.id) }}" class="dropdown-item">{{mod.name}}</a>
+                                    </li>
+                                {% endif %}
+                            {% endif %}   
+                                                
+                        {% endfor %}
                     {% endif %}
-                    
-                    {% for mod in mods %}
-                        
-                        {% if mod.code != "GEN" %}
-                            {% if current_user.role.name == "Ayudante de operación" and mod.code != "RSC" %}
-                                <li>
-                                    <a href="{{ url_for('common.report', mod_id=mod.id) }}" class="dropdown-item">{{mod.name}}</a>
-                                </li>
-                            {% elif current_user.role.name != "Ayudante de operación" %}
-                                <li>
-                                    <a href="{{ url_for('common.report', mod_id=mod.id) }}" class="dropdown-item">{{mod.name}}</a>
-                                </li>
-                            {% endif %}
-                        {% endif %}                           
-                    {% endfor %}
-                    
                     
                 </ul>
                 {% else %}

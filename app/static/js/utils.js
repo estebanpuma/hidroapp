@@ -32,13 +32,17 @@ async function delete_thumbs(button) {
 
 function thumbs_process(){
 
-    const uploadForm = document.getElementById('uploadForm');
-    const fileInput = document.getElementById('files');
-    const imagePreview = document.getElementById('imagePreview');
+        const uploadForm = document.getElementById('uploadForm');
+        const fileInput = document.getElementById('files');
+        const imagePreview = document.getElementById('imagePreview');
 
     // Manejar la selección de archivos para previsualización
     //fileInput.addEventListener('change', function() {
         
+        if (fileInput.files.length > 9) { // Cambia el número a tu límite deseado
+            alert("Solo puedes subir un máximo de 9 imágenes.");
+            input.value = ''; // Borra la selección de archivos
+        }
 
         const files = fileInput.files;
         for (let i = 0; i < files.length; i++) {

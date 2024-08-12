@@ -3,8 +3,6 @@ import os
 from flask import render_template, redirect, url_for, request, flash, current_app, send_from_directory, make_response, session, jsonify
 from flask_login import current_user, login_required
 
-
-
 from app.pdf import create_pdf
 from . import common_bp
 from .models import Activity, Module, Report, ReportImages, WorkOrder
@@ -16,11 +14,81 @@ from .utils import save_report
 
 
 
-@common_bp.route("/<module>/activity/<int:activity_id>")
-def activity(module, activity_id):
+#************************Acividades***********************************
+
+@common_bp.route("/add_activity/<int:activity_id>", methods=["GET", "POST"])
+@common_bp.route("/add_activity/", methods=["GET", "POST"])
+@login_required
+def add_activity(activity_id=None):
+    previous_url = get_prev_ref()
+    title = "Nueva actividad"
+    mod_code = request.args("mod_code")
+    mod = None
+    if mod_code:
+        try:
+            mod = Module.query.filter_by(code = mod_code).first()
+        except:
+            flash("Ocurrió un error (mod_code)", "danger")
+            return redirect("common.activities")
+        
+    activity = None
+    
+    if activity_id:
+        activity = Activity.query.get_or_404(activity_id)
+        title = "Editar"
+    error_msg = None
+    
+    if request.method == "POST":
+        name = request.form["name"]
+        description = request.form["description"]
+        module = request.form["mod"]
+        notes = request.form["notes"]
+        
+        if activity:
+            title = "Editar"
+            activity.name = name
+            activity.description = description
+            activity.notes = notes
+            
+            activity.save()
+            
+        else:
+            
+            if already_exist(Activity, name, module):
+                error_msg = f"La actividad: {name} ya existe"
+            n_env_activity = Activity(module= module,
+                                      name=name,
+                                      description=description,
+                                      notes=notes)
+            n_env_activity.save()
+        
+        return redirect(previous_url)
+    
+    return render_template("common/add_activity.html", 
+                           title = title,
+                           module = module,
+                           activity = activity,
+                           previous_url = previous_url,
+                           error_msg = error_msg)
+
+@common_bp.route("/activities/")
+def activities():
+    title = "Actividades"
+    previous_url = get_prev_ref()
+    
+
+    return render_template("common/activities.html",
+                           title = title,
+                           previous_url = previous_url,
+                           activities = activities
+                           )
+
+
+@common_bp.route("/activity/<int:activity_id>")
+def activity(activity_id):
     title = "Actividad"
     module = module
-    activity = Activity.query.get(activity_id)
+    activity = Activity.query.get_or_404(activity_id)
     previous_url = get_prev_ref()
         
     return render_template("common/activity.html", 
@@ -30,8 +98,20 @@ def activity(module, activity_id):
                            previous_url = previous_url)
     
 
+@common_bp.route("/delete_activity/<int:activity_id>/")
+@login_required
+def delete_activity(activity_id):
+    activity = Activity.query.get_or_404(activity_id)
+    try:
+        activity.delete()
+        flash("Actividad eliminada satisfactoriamente", "success")
+    except Exception:
+        flash("Ocurrió un error al emininar la actividad", "danger")
 
-
+    return redirect(url_for("common.activities"))
+    
+    
+#******************Reports*************************************
 
 @common_bp.route('/report/<int:mod_id>', methods=['GET', 'POST'])
 @login_required
@@ -73,7 +153,6 @@ def report(mod_id):
                            form = form,
                            activities = activities)
             
-        flash('Reporte creado satisfactoriamente!', 'success')        
         return redirect(url_for('common.reports'))
         
 
@@ -216,47 +295,7 @@ def media_report(filename):
     return send_from_directory(dir_path, filename)
     
     
-@common_bp.route("/<module>/add_activity/<int:activity_id>", methods=["GET", "POST"])
-@common_bp.route("/<module>/add_activity/", methods=["GET", "POST"])
-@login_required
-def add_activity(module, activity_id=None):
-    title = "Nueva actividad"
-    module = module
-    previous_url = get_prev_ref()
-    activity = Activity.query.get(activity_id)
-    error_msg = None
-    
-    if request.method == "POST":
-        name = request.form["name"]
-        description = request.form["description"]
-        notes = request.form["notes"]
-        
-        if activity:
-            title = "Editar"
-            activity.name = name
-            activity.description = description
-            activity.notes = notes
-            
-            activity.save()
-            
-        else:
-            
-            if already_exist(Activity, name, module):
-                error_msg = f"La actividad: {name} ya existe"
-            n_env_activity = Activity(module= module,
-                                      name=name,
-                                      description=description,
-                                      notes=notes)
-            n_env_activity.save()
-        
-        return redirect(previous_url)
-    
-    return render_template("common/add_activity.html", 
-                           title = title,
-                           module = module,
-                           activity = activity,
-                           previous_url = previous_url,
-                           error_msg = error_msg)
+
     
 
 
@@ -265,7 +304,7 @@ def add_activity(module, activity_id=None):
 @login_required
 def generate_pdf(report_id):
     
-    report = Report.query.get(report_id)
+    report = Report.query.get_or_404(report_id)
     images = ReportImages.query.filter_by(report_id=report.id)
     data = {
         'codigo': str(report.code),
@@ -285,7 +324,6 @@ def generate_pdf(report_id):
     
     image_paths = []  # Add up to 10 image paths
     
-        
     for image in images:
         if image.filename:
             image_path = os.path.join(current_app.config['REPORT_IMAGES_DIR'], image.filename)

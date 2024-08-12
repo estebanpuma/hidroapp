@@ -60,6 +60,7 @@ class Month(db.Model, BaseModel):
 class Activity(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     module = db.Column(db.String, db.ForeignKey("modules.name") ,nullable = False)
+    
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String)
     notes = db.Column(db.String)

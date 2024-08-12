@@ -76,18 +76,14 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
     
     
     try:
-        print("intenta guardar imagenes nuevas")
-        print(files)
         process_and_save_images(files, detail, report.id)
-        flash("Reporte creado exitosamente", "success")
+        flash("Reporte creado satisfactoriamente", "success")
 
     except Exception as e:
-        print("no puede guardar imagenes nuevas")
         flash(f"{str(e)}", "danger")
         if is_new_report:
             report.delete()
-        
-        raise RuntimeError("erre")
+        raise RuntimeError("err")
            
            
 def get_image_metadata(image_file):
@@ -115,17 +111,14 @@ def img_date_validator(temp_file, date):
     # Extraer la fecha de la foto
     date_taken = get_image_metadata(temp_file)
     
-    print("entra a imgdatevalidatore")
-    
     if not date_taken:
-        flash("No se pudo verificar la fecha de la foto. Asegúrate de que la foto no esté modificada.", "danger")
-        raise ValueError("No se pudo verificar la fecha de la foto.")
+         
+        raise ValueError("No se pudo verificar la fecha de la foto. Asegúrate de que la foto no esté modificada ni descargada")
         
 
     # Validar que la foto fue tomada en el día correcto
     current_date = date.strftime("%Y:%m:%d")
     if current_date not in date_taken:
-        print("validacion condifcion if fecha")
         raise InvalidFileDate("La foto no fue tomada en la fecha correcta.")
     
     return True
@@ -137,41 +130,29 @@ def process_and_save_images(files, detail, report_id):
     try:
     #ciclo para validar las imagenes
         for file in files:
-            print("Entra al fooor")
             temp_file = None
             if file and file.filename:
                 
                 file_content = file.read()
-                print(f"file {file}")
                 temp_file = io.BytesIO(file_content)
-                print(f"temp_file {temp_file}")
                 if img_date_validator(temp_file, detail.date):
                     save_image = io.BytesIO(file_content)
                     new_img = FileStorage(save_image,filename=file.filename)
-                    validated_images.append(new_img)       
-                    print("imagn validada")             
+                    validated_images.append(new_img)                  
                 else:
                     validated_images.clear()
                     raise InvalidFileDate(f"La imagen {file.filename} no fue tomada en la fecha correcta.")
-        print("pasa fooor pasa")
     except Exception as e:
-        print("tavel entra qui")
         # Limpiar imágenes guardadas si hay error
         validated_images.clear()
         raise Exception(f"Error: {str(e)}")
             
     finally:
-        print("pentra a fnmallo") 
-        
         if temp_file:
-            print(f"temp file") 
             temp_file.close() 
-     
-    print("punto medio")   
+
     for img in validated_images:   
-        print("entra al otro for??")
         try:
-            print("entra a img validated img")
             save_images("REPORT_IMAGES_DIR", img, ReportImages, report_id  )
         except Exception as e:
             # Si falla el guardado de una imagen, eliminar todas las imágenes guardadas
