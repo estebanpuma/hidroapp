@@ -14,19 +14,17 @@
         </div>
         <div class="card-body">
             <h2 class="card-title mb-2">{{ activity.name }}</h2>
-            <h5 class="card-subtitle mb-5 text-muted"><i class="bi bi-box"></i>Módulo: {{ activity.module }}</h5>
+            <h5 class="card-subtitle mb-5 text-muted"><i class="bi bi-box"></i>Módulo: {{ activity.module.name }}</h5>
             
             <p class="card-text fw-medium">Descripción: </p>
             <p class="card-text">{{ activity.description }}</p>
-            <p class="card-text fw-medium">Observaciones: </p>
-            <p class="card-text">{{ activity.notes }}</p>
             <div class="d-flex justify-content-end">
                 <a href="{{url_for('common.add_activity', module=module, activity_id=activity.id)}}" class="btn btn-primary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
             </div>
-            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal-{{activityS.id}}">
+            <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal-{{activity.id}}">
                 <i class="bi bi-trash"></i><br>                            
             </button>
-            {% set modal_id = report.id %}
+            {% set modal_id = activity.id %}
             {% set delete_url = url_for('common.delete_activity', activity_id=activity.id) %}
             {% include "__delete_modal.html"%} 
         </div>

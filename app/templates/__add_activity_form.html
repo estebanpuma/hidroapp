@@ -5,14 +5,21 @@
             <label for="name" class="form-label">Nombre</label>
             <input type="text" name="name" id="name" class="form-control" value="{{ activity.name }}" required>
         </div>
+
+        <div class="mb-3">
+            <label for="notes" class="form-label">Modulo</label>
+            <select class="form-select" name="mod" id="mod">
+                {% for mod in mods %}
+                    <option value="{{mod.id}}">{{mod.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="mb-3">
             <label for="description" class="form-label">Descripción</label>
             <textarea name="description" id="description" cols="30" rows="8" class="form-control" placeholder="Descripción">{{ activity.description }}</textarea>
         </div>
-        <div class="mb-3">
-            <label for="notes" class="form-label">Observaciones</label>
-            <textarea name="notes" id="notes" cols="30" rows="5" class="form-control"  placeholder="Observaciones">{{ activity.notes }}</textarea>
-        </div>
+        
         <div class="mb-3">
             <button type="submit" class="btn btn-primary">Guardar</button>
         </div>

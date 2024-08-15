@@ -59,15 +59,15 @@ class Month(db.Model, BaseModel):
 
 class Activity(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
-    module = db.Column(db.String, db.ForeignKey("modules.name") ,nullable = False)
-    
+    mod_id = db.Column(db.Integer, db.ForeignKey('modules.id'))
     name = db.Column(db.String, unique=True, nullable=False)
     description = db.Column(db.String)
-    notes = db.Column(db.String)
+    
+    module = db.relationship("Module", back_populates="activities")
     
     @staticmethod
-    def get_by_module(module):
-        return Activity.query.filter_by(module=module).all()
+    def get_by_module(mod_id):
+        return Activity.query.filter_by(mod_id=mod_id).all()
     
 
 class Module(db.Model, BaseModel):
@@ -81,6 +81,7 @@ class Module(db.Model, BaseModel):
     
     reports = db.relationship("Report", back_populates="module")
     work_orders = db.relationship("WorkOrder", back_populates="module")
+    activities = db.relationship("Activity", back_populates="module" )
     
     def __repr__(self):
         return self.name 
@@ -183,10 +184,11 @@ class ReportDetail(db.Model, BaseModel):
     start_hour = db.Column(db.Time, nullable=False)
     end_hour = db.Column(db.Time, nullable=False)
     total_time = db.Column(db.Float, nullable=False)
-    team = db.Column(db.Integer, nullable = False)
-    notes = db.Column(db.String)
+    n_team = db.Column(db.Integer, nullable = True)
+    notes = db.Column(db.Text)
     is_aproved = db.Column(db.Boolean, default=False) 
     
+    team = db.relationship("ReportTeam", back_populates="report_detail")
     report = db.relationship("Report", back_populates="details")
     images = db.relationship("ReportImages", back_populates="report_detail", cascade="all, delete-orphan")
     responsible = db.relationship("User")
@@ -201,7 +203,16 @@ class ReportDetail(db.Model, BaseModel):
         
         return total_time
     
-     
+
+class ReportTeam(db.Model, BaseModel):
+    id = db.Column(db.Integer, primary_key=True) 
+    report_id = db.Column(db.Integer, db.ForeignKey("report.id"))
+    report_detail_id = db.Column(db.Integer, db.ForeignKey("report_detail.id"))
+    person_id = db.Column(db.Integer, db.ForeignKey("app_users.id"))
+    
+    report_detail = db.relationship("ReportDetail", back_populates="team")
+    user = db.relationship('User', back_populates='report_team')
+    
 class ReportImages(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     report_id = db.Column(db.Integer, db.ForeignKey("report.id"))

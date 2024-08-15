@@ -1,7 +1,9 @@
+{% extends "base.html" %}
+
 {% block title %} {{title}} {% endblock %}
 
 {% block content %}
-    {% set href = {{ previous_url }} %}
+    {% set href = previous_url %}
     {% include "__title.html" %}
 
     <div class="table-responsive">
@@ -16,14 +18,14 @@
                     {% for activity in activities %}
                         <tr>
                             <td>
-                                <a href="{{url_for('common.activity_view', activity_id=activity.id)}}" class="text-center text-decoration-none text-secondary">
+                                <a href="{{url_for('common.view_activity', activity_id=activity.id)}}" class="text-center text-decoration-none text-secondary">
                                     {{ activity.name }} <i class="bi bi-chevron-right"></i>
                                 </a>
                             </td>               
-                            <td>{{ activity.mod.name }}</td>
+                            <td>{{ activity.module.name }}</td>
                             <td></td>
                             <td>
-                                <a href="{{url_for('common.activity_view', activity_id=activity.id)}}" class="text-center text-decoration-none text-secondary">
+                                <a href="{{url_for('common.view_activity', activity_id=activity.id)}}" class="text-center text-decoration-none text-secondary">
                                    <i class="bi bi-chevron-right"></i>
                                 </a>                                                    
                             </td>                            

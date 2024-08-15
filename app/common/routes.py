@@ -22,7 +22,7 @@ from .utils import save_report
 def add_activity(activity_id=None):
     previous_url = get_prev_ref()
     title = "Nueva actividad"
-    mod_code = request.args("mod_code")
+    mod_code = request.args.get("mod_code")
     mod = None
     if mod_code:
         try:
@@ -42,13 +42,13 @@ def add_activity(activity_id=None):
         name = request.form["name"]
         description = request.form["description"]
         module = request.form["mod"]
-        notes = request.form["notes"]
+        
         
         if activity:
             title = "Editar"
             activity.name = name
             activity.description = description
-            activity.notes = notes
+            activity.mod_id = int(module)
             
             activity.save()
             
@@ -56,45 +56,45 @@ def add_activity(activity_id=None):
             
             if already_exist(Activity, name, module):
                 error_msg = f"La actividad: {name} ya existe"
-            n_env_activity = Activity(module= module,
+            n_env_activity = Activity(mod_id= module,
                                       name=name,
                                       description=description,
-                                      notes=notes)
+                                      )
             n_env_activity.save()
         
-        return redirect(previous_url)
+        return redirect(url_for("common.activities"))
     
     return render_template("common/add_activity.html", 
                            title = title,
-                           module = module,
                            activity = activity,
                            previous_url = previous_url,
                            error_msg = error_msg)
+
 
 @common_bp.route("/activities/")
 def activities():
     title = "Actividades"
     previous_url = get_prev_ref()
-    
+    activities = Activity.query.all()
 
     return render_template("common/activities.html",
                            title = title,
                            previous_url = previous_url,
-                           activities = activities
+                           activities = activities,
                            )
 
 
-@common_bp.route("/activity/<int:activity_id>")
-def activity(activity_id):
+@common_bp.route("/view_activity/<int:activity_id>")
+def view_activity(activity_id):
     title = "Actividad"
-    module = module
+    
     activity = Activity.query.get_or_404(activity_id)
     previous_url = get_prev_ref()
         
-    return render_template("common/activity.html", 
+    return render_template("common/view_activity.html", 
                            title = title,
                            activity = activity,
-                           module = module,
+                           
                            previous_url = previous_url)
     
 
@@ -121,6 +121,7 @@ def report(mod_id):
     wo = WorkOrder.get_by_id(WorkOrder, wo_id)
     previous_url = get_prev_ref()
     users = get_users_list()
+    users = [{'id': user.id, 'name': user.name} for user in users]
     mod = Module.query.get_or_404(mod_id)
     if mod.code == "MAN" and wo_id == None:
         return redirect(url_for("maintenance.work_orders", report="report"))

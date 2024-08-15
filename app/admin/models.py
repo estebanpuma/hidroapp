@@ -15,7 +15,9 @@ class User(db.Model, UserMixin, BaseModel):
     password = db.Column(db.String, nullable=False)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), default=1)
     birth = db.Column(db.Date)
+    
     role = db.relationship("Role")
+    report_team= db.relationship('ReportTeam', back_populates='user')
     
     def __repr__(self):
         return self.name
@@ -42,6 +44,7 @@ class Role(db.Model, BaseModel):
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
+    code = db.Column(db.String(68))
     description = db.Column(db.String)
     permissions = db.relationship("RolePermission")
     
