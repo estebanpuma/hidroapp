@@ -176,22 +176,49 @@ class Report(db.Model, BaseModel):
 
 class ReportDetail(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
-    report_id = db.Column(db.Integer, db.ForeignKey("report.id"))
+    report_id = db.Column(db.Integer, db.ForeignKey("report.id"), nullable=False)
     activity = db.Column(db.String, nullable=False)
     description = db.Column(db.String, nullable=False)
-    responsible_id = db.Column(db.Integer, db.ForeignKey("app_users.id"))
+    responsible_id = db.Column(db.Integer, db.ForeignKey("app_users.id"), nullable=False)
     date = db.Column(db.Date, nullable=False)
     start_hour = db.Column(db.Time, nullable=False)
     end_hour = db.Column(db.Time, nullable=False)
     total_time = db.Column(db.Float, nullable=False)
-    n_team = db.Column(db.Integer, nullable = True)
+    _n_team = db.Column(db.Integer, nullable = True)
+    n_external = db.Column(db.Integer, default = 0)
     notes = db.Column(db.Text)
-    is_aproved = db.Column(db.Boolean, default=False) 
+    is_approved = db.Column(db.Boolean, default=False) 
     
-    team = db.relationship("ReportTeam", back_populates="report_detail")
+    team = db.relationship("ReportTeam", back_populates="report_detail", cascade="all, delete-orphan")
     report = db.relationship("Report", back_populates="details")
     images = db.relationship("ReportImages", back_populates="report_detail", cascade="all, delete-orphan")
     responsible = db.relationship("User")
+    
+    @property
+    def n_team(self):
+        if self._n_team is None:
+            """
+            Calcula el número total de miembros del equipo, incluyendo externos y el responsable.
+            """
+            if self.team:
+                calculated_n_team = len(self.team) + 1  # +1 por el responsable
+                if self.n_external and self.n_external > 0:
+                    calculated_n_team += int(self.n_external)  
+                self._n_team = calculated_n_team
+            else:
+                self._n_team = 1  # Valor por defecto si no hay equipo
+        return self._n_team
+
+    @n_team.setter
+    def n_team(self, value):
+        if self.team:
+            calculated_n_team = len(self.team) + 1  # +1 por el responsable
+            if self.n_external is not None and self.n_external > 0:
+                self.n_external = int(self.n_external)
+                calculated_n_team += self.n_external - 1  # Ajuste por externos
+            self._n_team = calculated_n_team
+        else:
+            self._n_team = value if value is not None else 1
     
     @staticmethod
     def calculate_total_time(start_hour, end_hour):
@@ -212,6 +239,7 @@ class ReportTeam(db.Model, BaseModel):
     
     report_detail = db.relationship("ReportDetail", back_populates="team")
     user = db.relationship('User', back_populates='report_team')
+    
     
 class ReportImages(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)

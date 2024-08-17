@@ -7,7 +7,22 @@
     {% include "__title.html" %}
 
     <h2>OT</h2>
+    
     <form action="" method="post" >
+        <div class="mb-3">
+            <label for="mod" class="form-label">Módulo</label>
+            <select name="mod_id" id="mod_id" class="form-select" required>
+                <option value="">Selecciona un módulo</option>
+                {% for mod in mods %}
+                    {% if work_order.mod_id %}
+                        <option value="{{mod.id}}" {% if mod.id == work_order.mod_id %} selected {% endif %}>{{ mod.name }}</option>
+                    {% else %}
+                        <option value="{{mod.id}}">{{ mod.name }}</option>
+                    {% endif %}
+                    
+                {% endfor%}
+            </select>
+        </div>
         <div class="mb-3" class="form-label">
             <label for="date">Fecha:</label>
             <input class="form-control" type="date" name="date" id="date" value="{{ today }}" required>
@@ -25,15 +40,27 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="mod" class="form-label">Módulo</label>
-            <select name="mod" id="mod" class="form-select" required>
-                <option selected disabled value>Selecciona un módulo</option>
-                {% for mod in mods %}
-                    {% if work_order.mod_id %}
-                        <option value="{{mod.id}}" {% if mod.id == work_order.mod_id %} selected {% endif %}>{{ mod.name }}</option>
+            <label for="assigned_personnel" class="form-label">Ejecutor:</label>
+            <select name="assigned_personnel" id="assigned_personnel" class="form-select">
+                <option value="">Seleccione un usuario</option>
+                {% for user in users %}
+                
+                    {% if work_order.assigned_personnel_id %}
+                    <option value="{{ user.id }}" {% if user.id == work_order.assigned_personnel_id %} selected {% endif %}>{{ user.name }}</option>
+                    {% else %}
+                    <option value="{{ user.id }}">{{ user.name }}</option>
                     {% endif %}
-                    <option value="{{mod.id}}">{{ mod.name }}</option>
-                {% endfor%}
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="priority" class="form-label">Prioridad</label>
+            <select name="priority_level" id="priority_level" class="form-select" required>
+                <option value="Inmediata">Inmediata</option>
+                <option value="Alta">Alta</option>
+                <option selected value="Media">Media</option>
+                <option value="Baja">Baja</option>    
             </select>
         </div>
         <div class="mb-3">

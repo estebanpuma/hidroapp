@@ -7,6 +7,34 @@
     {% include "__title.html" %}
 
     
+    <div class="col-md-8 mx-auto mb-5">
+        
+        
+            <form role="search" class="d-flex justify-content-center">
+                <div class="border border-1 rounded-3 d-flex flex-fill align-items-center">
+                    <label for="docsearch-input">
+                        <i class="bi bi-search  mx-2"></i>
+                    </label>
+                  
+                    <input id="docsearch-input" class="form-control " type="search" placeholder="Buscar" aria-label="Search" style="background: transparent; border:0"
+                    aria-autocomplete="both" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="64">
+                
+                </div>
+            
+            </form>
+
+            <div>
+            
+                <ul id="docsearch-list" class="list-group">
+                    <!-- Search results will be displayed here -->
+
+                </ul>
+                
+            </div>
+        
+         
+    </div>
+
     <div class="table-responsive">
         <table class="table table-hover">
             <thead>
@@ -51,5 +79,5 @@
             </tbody>
         </table>
     </div>
-
+    <script src="{{ url_for('static', filename='js/ot_search.js') }}"></script>
 {% endblock %}

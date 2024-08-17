@@ -1,5 +1,5 @@
 
-from flask import render_template, url_for, redirect, request, flash, current_app, send_from_directory
+from flask import render_template, url_for, redirect, request, flash, current_app, send_from_directory, jsonify
 from flask_login import current_user, login_required
 
 from app.common.models import Report, Module, WorkOrder
@@ -69,7 +69,7 @@ def work_order_view(wo_id):
 @login_required
 def work_order(wo_id=None):
     title = "Orden de trabajo"
-    previous_url = get_prev_ref()
+    previous_url = url_for("maintenance.work_orders")
     work_order = None
     today = get_today()
     users = get_users_list()
@@ -77,30 +77,37 @@ def work_order(wo_id=None):
     
     if wo_id:
         work_order = WorkOrder.query.get_or_404(wo_id)
-        print(work_order.activity)
+        
     if request.method == "POST":
         date = request.form.get('date')
         request_date = format_datetime(date)
         activity = request.form.get("activity")
         description = request.form.get('description')
         responsible_id = request.form.get("responsible_id")
-        mod_id = request.form.get("mod")
-        
+        mod_id = request.form.get("mod_id")
+        priority_level = request.form.get("priority_level")
+        assigned_personnel = request.form.get("assigned_personnel")
         
         if work_order:
             work_order.request_date = request_date
             work_order.activity = activity
             work_order.description = description
             work_order.responsible_id = responsible_id
-            work_order.mod_id = mod_id
+            work_order.mod_id = int(mod_id)
+            work_order.assigned_personnel_id = assigned_personnel
+            work_order.priority_level = priority_level
             
         else:
-            work_order = WorkOrder(mod_id = mod_id,
-                                    request_date = request_date,
-                                    responsible_id = responsible_id,
-                                    activity = activity,
-                                    description = description)
-        
+            try:
+                work_order = WorkOrder(mod_id = int(mod_id),
+                                        request_date = request_date,
+                                        responsible_id = responsible_id,
+                                        activity = activity,
+                                        description = description,
+                                        assigned_personnel = assigned_personnel,
+                                        priority_level = priority_level)
+            except TypeError:
+                flash(f"error mod_id {mod_id}")
         try:
             work_order.save()
             flash("OT guardada correctamente", "success")
@@ -122,10 +129,12 @@ def work_order(wo_id=None):
 @maintenance_bp.route("/close_ot/<int:wo_id>", methods=["GET", "POST"])
 @login_required
 def close_work_order(wo_id):
-    title = "OT"
+    
+    title = "Cerrar OT"
     previous_url = get_prev_ref()
     users = get_users_list()
     today = get_today()
+    
     try: 
         work_order = WorkOrder.get_by_id(WorkOrder, wo_id)
     except:
@@ -136,12 +145,17 @@ def close_work_order(wo_id):
         end_date = request.form.get("date")
         end_date = format_datetime(end_date)
         close_responsible = request.form.get("close_responsible")
+        status = request.form.get("status")
         
+        work_order.status = status
         work_order.end_date = end_date
         work_order.close_responsible = close_responsible
-        work_order.status = "Completada"
+    
+        try:
+            work_order.save()
+        except:
+            flash("No se pudo cerrar la OT", "danger")
         
-        work_order.save()
         return redirect(url_for("maintenance.work_orders"))
     
     return render_template("maintenance/close_work_order.html",
@@ -167,5 +181,28 @@ def delete_work_order(wo_id):
 
 
 
-
-
+@maintenance_bp.route('/wo_search')
+def wo_search():
+    query = request.args.get('q', '').lower()
+    results_by_activity = WorkOrder.query.filter(WorkOrder.activity.ilike(f'%{query}%')).all()
+    results_by_responsible = WorkOrder.query.join(User, WorkOrder.responsible_id == User.id) \
+                                            .filter(User.name.ilike(f'%{query}%')).all()
+    
+    # Supongamos que `request_date` es una cadena en formato 'YYYY-MM-DD'
+    results_by_date = WorkOrder.query.filter(WorkOrder.request_date.ilike(f'%{query}%')).all()
+    
+    # Combinar los resultados, eliminando duplicados
+    results = list({wo.id: wo for wo in results_by_activity + results_by_responsible + results_by_date}.values())
+    
+    # Serializar los resultados
+    results_serialized = [
+        {
+            'id': wo.id,
+            'activity': wo.activity,
+            'request_date': wo.request_date.strftime('%Y-%m-%d'),
+            'responsible': wo.responsible.name
+        }
+        for wo in results
+    ]
+    
+    return jsonify({'results': results_serialized})

@@ -10,29 +10,30 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-                    <th scope="col">Código</th>                 
+                    <th scope="col">Código&nbsp;&nbsp;&nbsp;   </th>                 
                     <th scope="col">Actividad</th>
-                    <th scope="col">Fecha</th>
+                    <th scope="col" class="text-nowrap">Fecha</th>
                     <th scope="col" colspan="2"></th>
                 </tr>
                 <tbody>
                     {% for report in reports %}
-                        <tr>
-                            <td>
-                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-secondary">
-                                    {{ report.code }} <i class="bi bi-chevron-right"></i>
+                        <tr >
+                            <td class="pb-5" >
+                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-secondary mb-5">
+                                    {{ report.code }} <br>
                                 </a>
                             </td>               
-                            <td>{{ report.details.activity }}</td>
-                            <td>{{ report.details.date }}</td>
+                            <td>
+                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-black">
+                                    {{ report.details.activity }}
+                                </a>
+                            </td>
+                            <td class="text-nowrap">{{ report.details.date }}</td>
                             <td></td>
                             <td>
-                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#deleteModal-{{report.id}}">
-                                    <i class="bi bi-trash"></i><br>                            
-                                </button>
-                                {% set modal_id = report.id %}
-                                {% set delete_url = url_for('common.delete_report', report_id=report.id) %}
-                                {% include "__delete_modal.html"%}                                                     
+                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-secondary">
+                                     <i class="bi bi-chevron-right"></i>
+                                </a>                                                
                             </td>                            
                         </tr>
                     {% endfor %}    

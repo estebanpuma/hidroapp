@@ -29,19 +29,52 @@
                         <i class="bi bi-clock"> Hora fin:</i>
                         <h6 class="mt-2 mb-2 col">{{ report.details.end_hour }}</h6>
                     </div>
+                
                 <div class="col-sm-3 border border-1">
                         <i class="bi bi-person"> Responsable:</i>
                         <h6 class="mt-2 mb-2 col">{{ report.details.responsible.name }}</h6>
                 </div>
+                
             </div>
+
+            
+
             <h2 class="card-title mb-2">{{ report.details.activity }}</h2>
             
- 
+            
             
             <div class="mb-3">
                 <p class="card-text fw-medium">Descripción: </p>
                 <p class="card-text">{{ report.details.description }}</p>
+                
             </div>
+
+            <div class="mb-3">
+                <p class="card-text fw-medium">Duración de la actividad: </p>
+                <p class="card-text" ><i class="bi bi-clock"></i> Total: {{ report.details.total_time | round(2) }} horas  </p>
+            </div>
+
+            <div class="mb-3">
+                <p class="card-text fw-medium">Equipo de trabajo: </p>
+                
+                
+                <ul>
+                    <li class="card-text">{{ report.details.responsible.name }} (R) </li>
+                    {% for worker in team %}
+                        <li class="card-text">{{ worker.user.name }}</li>
+                    {% endfor %}
+                    {% if report.details.n_external != 0 and report.details.n_external != None %}
+                        <li class="card-text">Trabajadores externos: {{ report.details.n_external }}</li>
+                    {% endif %}
+                    
+                </ul>
+                <p class="card-text">&nbsp;&nbsp;&nbsp;&nbsp;Total trabajadores: {{ report.details.n_team }}</p>
+                
+                   
+             
+            </div>
+            
+            
             <div class="mb-3">
                 <p class="card-text fw-medium">Observaciones: </p>
                 <p class="card-text">{{ report.details.notes }}</p>
@@ -57,7 +90,13 @@
 
             <div class="d-flex justify-content-end">
                 <a href="{{ url_for('common.generate_pdf', report_id=report.id)}}" class="btn btn-primary btn-sm me-2"><i class="bi bi-file-pdf"></i>PDF</a>
-                <a href="{{ url_for('common.edit_report', report_id=report.id) }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
+                <a href="{{ url_for('common.edit_report', report_id=report.id) }}" class="btn btn-outline-secondary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{report.id}}">
+                    <i class="bi bi-trash"></i>Borrar<br>                            
+                </button>
+                {% set modal_id = report.id %}
+                {% set delete_url = url_for('common.delete_report', report_id=report.id) %}
+                {% include "__delete_modal.html"%}   
             </div>
         </div>
     </div>

@@ -118,10 +118,10 @@ function add_workers(users){
 
         var container = document.getElementById("team-container");
         var workerDiv = document.createElement("div");
-        workerDiv.className = "worker-select mt-2";
+        workerDiv.className = "worker-select mt-2 container row justify-content-center";
 
         var workerSelect = document.createElement("select");
-        workerSelect.className = "form-select";
+        workerSelect.className = "form-select col";
         workerSelect.name = "team[]";
         selectCounter += 1;
         workerSelect.id = `select_id_${selectCounter}`
@@ -155,7 +155,7 @@ function add_workers(users){
         workerDiv.appendChild(workerSelect);
 
         var removeButton = document.createElement("button");
-        removeButton.className = "btn btn-close";
+        removeButton.className = "btn btn-close col-2 align-self-center";
         removeButton.onclick = function() {
             container.removeChild(workerDiv);
             
@@ -173,7 +173,8 @@ function add_workers(users){
             if(selectedValue === "external"){
                 var externalInput = document.createElement("input");
                 externalInput.type = "number";
-                externalInput.name = "external";
+                externalInput.name = "n_external";
+                externalInput.id = "n_external";
                 externalInput.className = "form-control";
                 externalInput.placeholder = "# trabajadores externos";
                 workerDiv.appendChild(externalInput);
@@ -188,9 +189,13 @@ function add_workers(users){
 
     document.getElementById("responsible_id").addEventListener("change", updateOptions);
     
-
+    document.querySelectorAll("select[name='team[]']").forEach(function(select) {
+        select.addEventListener("click", updateOptions);
+    });
+    
     function updateOptions() {
         console.log("entra a updateOptions")
+        console.log("selected inputs: ", selectedUsersInputs)
         var selects = document.querySelectorAll("select[name='team[]']");
         
         var resposibleSelect =  document.getElementById("responsible_id");
@@ -199,6 +204,7 @@ function add_workers(users){
         
         selects.forEach(function(select){
             var currentValue = select.value;
+            selectedUsersInputs[select.id] = currentValue;
             
             select.innerHTML = "";
             
@@ -209,7 +215,6 @@ function add_workers(users){
                 select.appendChild(defaultOption);
                 defaultOption.selected;
             }
-            console.log("1 select value: ", select.value, "vs ", currentValue)
             users.forEach(function(user){
                 
                 if(user.id !== responsible_id){

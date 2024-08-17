@@ -1,6 +1,6 @@
 import io
 
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, request
 
 from werkzeug.datastructures import FileStorage
 
@@ -9,7 +9,7 @@ import piexif
 
 from app.utils import save_images
 from .datetime_format import *
-from .models import Activity, Module, Report, ReportDetail, MaintenanceDetails, MaintenanceSpareParts, ReportImages
+from .models import Activity, Module, Report, ReportDetail, MaintenanceDetails, MaintenanceSpareParts, ReportImages, ReportTeam
 
 from .exceptions import InvalidFileDate
 
@@ -26,16 +26,30 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
         report.work_order_id = wo_id
         report.save()
         is_new_report = True
-
+    else:
+        is_new_report = False
             
     if report.details:
         detail = report.details
     else:
         detail = ReportDetail()
         report.details = detail
-
+        
+    form_team = request.form.getlist('team[]')
+    team = list(set(form_team))
+   
+    if "external" in team:
+        n_external = form.get("n_external")
+        if n_external is not None and n_external>0:
+            n_external = int(n_external)
+            detail.n_external = n_external
+            
+    else:
+        detail.n_external = 0        
+    
     detail.report_id = report.id
     detail.activity = form.get("activity")
+    print(form.get("activity"))
     detail.description = form.get("description")
     detail.responsible_id = form.get("responsible_id")
     date = form.get("date")
@@ -46,7 +60,8 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
     detail.end_hour = end_hour
     detail.total_time = detail.calculate_total_time(start_hour, end_hour)
     detail.notes = form.get("notes")
-    detail.team = form.get("team")
+    
+    
     try:
         detail.save()
     except:
@@ -54,7 +69,30 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
             report.delete()
         flash("No se pudo guardar el reporte", "danger")
         return redirect(url_for("common.reports"))
-    
+   
+    if team:
+        existing_team_ids = []
+        
+        if is_new_report == False:
+            
+            existing_team_ids = [worker.person_id for worker in detail.team] 
+            
+            for worker in detail.team:
+                if str(worker.person_id) not in team:
+                    try:
+                        worker.delete()
+                    except Exception as e:
+                        flash("Error al eliminar trabajador del equipo.")
+           
+        for worker in team:
+            
+            if worker != "external":
+                worker_id = int(worker)
+                if worker_id not in existing_team_ids:
+                    report_team = ReportTeam(report_id=report.id, report_detail_id = detail.id, person_id= worker_id)
+                    report_team.save()
+            
+                
     if mod.code == "MAN":
         if report.maintenance_details:
             maintenance_details = report.maintenance_details
@@ -77,7 +115,7 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
     
     try:
         process_and_save_images(files, detail, report.id)
-        flash("Reporte creado satisfactoriamente", "success")
+       
 
     except Exception as e:
         flash(f"{str(e)}", "danger")

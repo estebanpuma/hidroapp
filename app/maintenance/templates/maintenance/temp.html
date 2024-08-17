@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    {% if wo.status == "Abierta" %}
+        <a href="{{ url_for('common.report', mod_id=wo.mod_id, wo_id=wo.id) }}" class="btn btn-primary btn-sm me-2">
+            <i class="bi bi-file-earmark-plus"></i> Reporte
+        </a>
+    {% endif %}
+
+    <div class="card mt-3">
+        <div class="card-header bg-light">
+            <div class="card-title">
+                <i class="bi bi-info-circle"> Detalles de la orden de trabajo</i>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">   
+                <h5 class="card-subtitle mb-3 text-muted text-end">Código: {{wo.code}}</h5>
+            </div>
+            <div class="mb-4 text-center">
+                <div class="row">
+                    <div class="col border border-1">
+                        <i class="bi bi-calendar-week"> Fecha:</i>
+                        <h6 class="mt-2 mb-2 col">{{ wo.request_date }}</h6>
+                </div>
+                <div class="col border border-1">
+                    <i class="bi bi-clock">Estado:</i>
+                    <h6 class="mt-2 mb-2 col">
+                        {% if wo.status == "Completada" %}
+                           <i class="bi bi-circle-fill text-secondary"></i> 
+                        {% else %}
+                            <i class="bi bi-circle-fill text-success"></i> 
+                        {% endif %}
+                        {{ wo.status }}
+                    </h6>
+                </div>
+                <div class="col border border-1">
+                    <i class="bi bi-exclamation-circle">Prioridad:</i>
+                    <h6 class="mt-2 mb-2 col">
+                        {% if wo.priority_level == "Inmediata" %}
+                           <i class="bi bi-circle-fill text-danger"></i> 
+                        {% elif wo.priority_level == "Alta"  %}
+                            <i class="bi bi-circle-fill text-warning"></i>
+                        {% elif wo.priority_level == "Media"  %}
+                            <i class="bi bi-circle-fill text-primary"></i>
+                        {% else %}
+                            <i class="bi bi-circle-fill text-secondary"></i> 
+                        {% endif %}
+                        {{ wo.priority_level }}
+                    </h6>
+                </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-6 border border-1">
+                        <i class="bi bi-person"> Solicitado por:</i>
+                        <h6 class="mt-2 mb-2 col">{{ wo.responsible.name }}</h6>
+                    </div>
+                    <div class="col-6 border border-1">
+                        <i class="bi bi-person"> Ejecutor/Resp:</i>
+                        <h6 class="mt-2 mb-2 col">{{ wo.assigned_personnel.name }}</h6>
+                    </div>
+                </div>
+                
+            </div>
+            <h2 class="card-title mb-5">{{ wo.activity }}</h2>           
+            <div class="mb-5">
+                <p class="card-text fw-medium">Descripción: </p>
+                <p class="card-text">{{ wo.description }}</p>
+            </div>
+
+            <div class="mb-5">
+                <p class="card-text fw-medium">Reportes: </p>
+                {% if reports %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <th>Código</th>
+                            <th>Fecha</th>
+                            <th>Responsable</th>
+                        </thead>
+                        <tbody>
+                        {% for report in reports %}
+                            <tr>
+                                <td>
+                                    <a class="text-center text-decoration-none text-secondary" href="{{ url_for('common.report_view', report_id=report.id) }}">
+                                        {{ report.code }}<i class="bi bi-chevron-right"></i>
+                                    </a>
+                                    
+                                </td>
+                                <td>{{ report.details.date }}</td>
+                                <td>{{ report.details.responsible.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+                {% else %}
+                    <p class="card-text">No se han generado reportes</p>
+                {% endif %}
+            </div>
+
+            
+        </div>
+    </div>
+    <div class="d-flex justify-content-end mt-3">                
+        <a href="" class="btn btn-secondary btn-sm me-2"><i class="bi bi-printer"></i> Imprimir</a>
+        <a href="" class="btn btn-primary btn-sm me-2"><i class="bi bi-file-pdf"></i>PDF</a>
+        {% if current_user.role.name == "Operador" %}
+            <a href="{{ url_for('maintenance.work_order', wo_id=wo.id) }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
+            {% if wo.status == "Abierta" %}
+                <a href="{{ url_for('maintenance.close_work_order', wo_id=wo.id) }}" class="btn btn-sm me-2 btn-secondary"><i class="bi bi-check-circle"></i> Cerrar orden</a>
+            {% endif %}
+        {% endif %}
+    </div>
+    <div style="height: 60px;">
+
+    </div>   
+
+    
+
+{% endblock %}

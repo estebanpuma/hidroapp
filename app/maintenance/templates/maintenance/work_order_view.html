@@ -6,44 +6,108 @@
     {% set href = previous_url %}
     {% include "__title.html" %}
 
-    {% if wo.status == "Abierta" %}
-        <a href="{{ url_for('common.report', mod_id=wo.mod_id, wo_id=wo.id) }}" class="btn btn-primary btn-sm me-2">
-            <i class="bi bi-file-earmark-plus"></i> Reporte
-        </a>
-    {% endif %}
-
-    <div class="card mt-3">
+    <div class="card mt-3 shadow-sm">
         <div class="card-header bg-light">
-            <div class="card-title">
-                <i class="bi bi-info-circle"> Detalles de la orden de trabajo</i>
-            </div>
+            <h5 class="card-title mb-0">
+                <i class="bi bi-info-circle"></i> Detalles de la orden de trabajo
+            </h5>
         </div>
+        
         <div class="card-body">
-            <div class="row">   
-                <h5 class="card-subtitle mb-3 text-muted text-end">Código: {{wo.code}}</h5>
-            </div>
-            <div class="row mb-4 border border-1 text-center">
-                <div class="col border border-1">
-                        <i class="bi bi-calendar-week"> Fecha:</i>
-                        <h6 class="mt-2 mb-2 col">{{ wo.request_date }}</h6>
+
+            <!-- Info principal -->
+            
+                <div class="border rounded p-2 h-80 mb-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-upc-scan fs-4 me-2 text-primary-emphasis"></i>
+                        <span class="fw-bold">Código:  </span>  <p class="mb-0">{{wo.code}}</p>
+                    </div>
+                    
                 </div>
-                <div class="col border border-1">
-                    <i class="bi bi-clock">Estado:</i>
-                    <h6 class="mt-2 mb-2 col">
-                        {% if wo.status == "Completada" %}
-                           <i class="bi bi-circle-fill text-secondary"></i> 
-                        {% else %}
-                            <i class="bi bi-circle-fill text-success"></i> 
-                        {% endif %}
-                        {{ wo.status }}
-                    </h6>
-                </div>
+            
+            <div class="row mb-3">
                 
-                <div class="col-sm-4 border border-1">
-                        <i class="bi bi-person"> Solicitado por:</i>
-                        <h6 class="mt-2 mb-2 col">{{ wo.responsible.name }}</h6>
+                <div class="col-md-4">
+                    <div class="border rounded p-2">
+                        <div class="row ">
+                            
+                            <div class="d-flex align-items-center col">
+                                <i class="bi bi-calendar-week fs-4 me-2 text-primary-emphasis"></i>
+                                <span class="fw-bold">Fecha: &nbsp</span>
+                                
+                            </div>
+                            <p class="col text-nowrap m-auto">{{ wo.request_date }}</p>
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="d-flex align-items-center col">
+                                <i class="bi bi-clock fs-4 me-2 text-primary-emphasis"></i>
+                                <span class="fw-bold">Estado: &nbsp</span>
+                                
+                            </div>
+                            <p class="col text-nowrap m-auto">
+                                <span class="badge {{ 'bg-secondary' if wo.status == 'Completada' else 'bg-success' }}">
+                                    {{ wo.status }}
+                                </span>
+                            </p>
+                        </div>
+                        
+                        
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="d-flex align-items-center col">
+                                <i class="bi bi-exclamation-circle fs-4 me-2 text-primary-emphasis"></i>
+                                <span class="fw-bold">Prioridad:&nbsp </span> 
+                                
+                            </div>
+                            <p class="col text-nowrap m-auto">
+                                <span class="badge 
+                                    {% if wo.priority_level == 'Inmediata' %}bg-danger-subtle border border-danger text-danger
+                                    {% elif wo.priority_level == 'Alta' %}bg-danger
+                                    {% elif wo.priority_level == 'Media' %}bg-warning
+                                    {% else %}bg-secondary{% endif %}">
+                                    &nbsp&nbsp{{ wo.priority_level }}&nbsp&nbsp
+                                </span>
+                            </p>
+                        </div>
+                                          
+                    </div>
                 </div>
             </div>
+            
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="d-flex align-items-center col">
+                                <i class="bi bi-person fs-4 me-2 text-primary-emphasis"></i>
+                                <span class="fw-bold">Solicitado por: &nbsp</span> 
+                            </div>
+                            <p class="col text-nowrap m-auto">{{ wo.responsible.name }}</p>  
+                        </div> 
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                <i class="bi bi-person-check fs-4 me-2 text-primary-emphasis"></i>
+                                <span class="fw-bold">Ejecutor/Resp: &nbsp</span> 
+                            </div>
+                            <p class="col text-nowrap m-auto">{{ wo.assigned_personnel.name }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- El resto del OT -->
             <h2 class="card-title mb-5">{{ wo.activity }}</h2>           
             <div class="mb-5">
                 <p class="card-text fw-medium">Descripción: </p>
@@ -85,6 +149,9 @@
             
         </div>
     </div>
+
+    <!-- botones -->
+
     <div class="d-flex justify-content-end mt-3">                
         <a href="" class="btn btn-secondary btn-sm me-2"><i class="bi bi-printer"></i> Imprimir</a>
         <a href="" class="btn btn-primary btn-sm me-2"><i class="bi bi-file-pdf"></i>PDF</a>
@@ -97,8 +164,8 @@
     </div>
     <div style="height: 60px;">
 
-    </div>   
+    </div>
 
-    
+    <!-- El resto del código sigue igual -->
 
 {% endblock %}

@@ -77,9 +77,30 @@
                     </select>
                 </div>
                 
-                <div class="form-group mb-3 col-sm-4">
-                    <label for="team" class="form-label">N° personas:</label>
-                    <input type="number" class="form-control" id="team" name="team" value="{{ report.details.team }}"  required>
+                <div class="form-group mb-3">
+                    <label for="team" class="form-label">Equipo de trabajo:</label>
+                    <div id="team-container" class="form-group mb-3">
+                        {% for worker in team %}
+                            <div class="worker-select mt-2 container row justify-content-center">
+                                <select class="form-select col" name="team[]" id="select_id_{{worker.id}}">
+                                    <option value="{{worker.person_id}}">{{worker.user.name}}</option>
+                                </select>
+                                <button type="button" class="btn btn-close col-2 align-self-center"></button>
+                            </div>
+                        {% endfor %}
+                        {% if report.details.n_external != 0 %}
+                            <div class="worker-select mt-2 container row justify-content-center">
+                                <select class="form-select col" name="team[]" id="select_id_external">
+                                    <option value="external">Trabajador externo</option>
+                                </select>
+                                <button type="button" class="btn btn-close col-2 align-self-center"></button>
+                                <input type="number" class="form-control" id="n_external" name="n_external" value="{{report.details.n_external}}">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="button" id="add-worker" class="btn btn-primary mt-2">
+                        Añadir trabajador <i class="bi bi-person-plus"></i>
+                    </button>
                 </div>
             </div>
 
@@ -114,5 +135,27 @@
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
         </form>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+
+            //********************** eliminar div con btn close *****************************
+                document.querySelectorAll(".btn-close").forEach(function(button) {
+                    button.addEventListener("click", function() {
+                        // Obtener el contenedor padre del botón
+                        var workerDiv = this.closest(".worker-select");
+                        
+                        if (workerDiv) {
+                            workerDiv.remove(); // Elimina el div del DOM
+                        }
+                    });
+                });
+                
+                var users = JSON.parse('{{ users|tojson|safe }}');
+                console.log(users)
+                add_workers(users);
+            });
+           
+        </script>
 
 {% endblock %}

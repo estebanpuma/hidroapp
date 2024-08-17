@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 from app.pdf import create_pdf
 from . import common_bp
-from .models import Activity, Module, Report, ReportImages, WorkOrder
+from .models import Activity, Module, Report, ReportImages, WorkOrder, ReportTeam
 
 from app.utils import get_prev_ref, already_exist, get_users_list
 from .datetime_format import *
@@ -176,7 +176,8 @@ def edit_report(report_id):
     mods = Module.query.all()
     images = ReportImages.query.filter_by(report_id = report.id).all()
     users = get_users_list()
-
+    users = [{'id': user.id, 'name': user.name} for user in users]
+    team = ReportTeam.query.filter_by(report_id=report_id).all()
     if request.method == "POST":
         form = request.form
         files = request.files.getlist("files")
@@ -198,7 +199,8 @@ def edit_report(report_id):
                            users = users,
                            images = images,
                            form = form,
-                           previous_url = previous_url)
+                           previous_url = previous_url,
+                           team = team)
             
 
     return render_template('common/edit_report.html',
@@ -207,7 +209,8 @@ def edit_report(report_id):
                            mods = mods,
                            users = users,
                            images = images,
-                           previous_url = previous_url)
+                           previous_url = previous_url,
+                           team = team)
 
 
 @common_bp.route("/delete_image_report/<int:image_id>/", methods=["DELETE"])
@@ -267,10 +270,16 @@ def report_view(report_id):
     images = ReportImages.query.filter_by(report_id=report.id).all()
     title = "Reporte"
     previous_url = get_prev_ref()
+    team = ReportTeam.query.filter_by(report_id=report_id).all()
+    #for rp in team:
+    #    if rp.report_detail_id == None:
+    #        rp.delete()
+    #team = ReportTeam.query.filter_by(report_id=report_id).all()        
     return render_template("common/report_view.html",
                            title = title,
                            previous_url = previous_url,
                            report = report,
+                           team = team,
                            images = images)
 
 
