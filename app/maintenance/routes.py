@@ -1,6 +1,7 @@
 
 from flask import render_template, url_for, redirect, request, flash, current_app, send_from_directory, jsonify
 from flask_login import current_user, login_required
+from sqlalchemy import case
 
 from app.common.models import Report, Module, WorkOrder
 from app.admin.models import User
@@ -31,8 +32,24 @@ def work_orders():
     previous_url = get_prev_ref()
     nr = request.args.get("report")
     man = Module.query.filter_by(code="MAN").first()
+    
     if nr:
-        work_orders = WorkOrder.query.filter_by(status="Abierta", mod_id=man.id).order_by(WorkOrder.id.desc()).all()
+        priority_order = case(
+        
+            (WorkOrder.priority_level == "Inmediata", 1),
+            (WorkOrder.priority_level == "Alta", 2),
+            (WorkOrder.priority_level == "Media", 3),
+            (WorkOrder.priority_level == "Baja", 4),
+            else_=5 
+        
+        )
+
+        work_orders = (
+            WorkOrder.query
+            .filter_by(status="Abierta", mod_id=man.id)
+            .order_by(priority_order, WorkOrder.request_date.desc())
+            .all()
+        )
     else:
         work_orders = WorkOrder.query.order_by(WorkOrder.id.desc()).all()
     
@@ -77,6 +94,7 @@ def work_order(wo_id=None):
     
     if wo_id:
         work_order = WorkOrder.query.get_or_404(wo_id)
+        today = work_order.request_date
         
     if request.method == "POST":
         date = request.form.get('date')
@@ -169,13 +187,13 @@ def close_work_order(wo_id):
 @maintenance_bp.route("/delete_work_order/<int:wo_id>")
 @login_required
 def delete_work_order(wo_id):
-    if wo_id:
-        try:
-            wo = WorkOrder.get_by_id(WorkOrder, wo_id)
-            wo.delete()
-            flash("Registro borrado exitosamente", "success")
-        except:
-            flash("No se puede eliminar el registro", "danger")
+    
+    try:
+        wo = WorkOrder.query.get_or_404(wo_id)
+        wo.delete()
+        flash("Registro borrado exitosamente", "success")
+    except:
+        flash("No se puede eliminar el registro", "danger")
             
     return redirect(url_for("maintenance.work_orders"))
 
@@ -187,12 +205,12 @@ def wo_search():
     results_by_activity = WorkOrder.query.filter(WorkOrder.activity.ilike(f'%{query}%')).all()
     results_by_responsible = WorkOrder.query.join(User, WorkOrder.responsible_id == User.id) \
                                             .filter(User.name.ilike(f'%{query}%')).all()
-    
+    results_by_code = WorkOrder.query.filter(WorkOrder.code.ilike(f"%{query}%")).all()
     # Supongamos que `request_date` es una cadena en formato 'YYYY-MM-DD'
     results_by_date = WorkOrder.query.filter(WorkOrder.request_date.ilike(f'%{query}%')).all()
     
     # Combinar los resultados, eliminando duplicados
-    results = list({wo.id: wo for wo in results_by_activity + results_by_responsible + results_by_date}.values())
+    results = list({wo.id: wo for wo in results_by_activity + results_by_responsible + results_by_date + results_by_code}.values())
     
     # Serializar los resultados
     results_serialized = [
@@ -200,7 +218,8 @@ def wo_search():
             'id': wo.id,
             'activity': wo.activity,
             'request_date': wo.request_date.strftime('%Y-%m-%d'),
-            'responsible': wo.responsible.name
+            'responsible': wo.responsible.name,
+            'code': wo.code
         }
         for wo in results
     ]

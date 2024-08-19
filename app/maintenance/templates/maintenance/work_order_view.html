@@ -6,6 +6,12 @@
     {% set href = previous_url %}
     {% include "__title.html" %}
 
+    {% if wo.status == "Abierta" %}
+        <a href="{{ url_for('common.report', mod_id=wo.mod_id, wo_id=wo.id) }}" class="btn btn-primary btn-sm me-2">
+            <i class="bi bi-file-earmark-plus"></i> Reporte
+        </a>
+    {% endif %}
+
     <div class="card mt-3 shadow-sm">
         <div class="card-header bg-light">
             <h5 class="card-title mb-0">
@@ -17,9 +23,8 @@
 
             <!-- Info principal -->
             
-                <div class="border rounded p-2 h-80 mb-3">
+                <div class="p-2 h-80 mb-3">
                     <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-upc-scan fs-4 me-2 text-primary-emphasis"></i>
                         <span class="fw-bold">Código:  </span>  <p class="mb-0">{{wo.code}}</p>
                     </div>
                     
@@ -153,12 +158,20 @@
     <!-- botones -->
 
     <div class="d-flex justify-content-end mt-3">                
-        <a href="" class="btn btn-secondary btn-sm me-2"><i class="bi bi-printer"></i> Imprimir</a>
         <a href="" class="btn btn-primary btn-sm me-2"><i class="bi bi-file-pdf"></i>PDF</a>
-        {% if current_user.role.name == "Operador" %}
-            <a href="{{ url_for('maintenance.work_order', wo_id=wo.id) }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
-            {% if wo.status == "Abierta" %}
+        {% if current_user.role.name in ["admin","Operador"] %}
+            {% if wo.status != "Completada" or current_user.name == "admin" %}
+                <a href="{{ url_for('maintenance.work_order', wo_id=wo.id) }}" class="btn btn-secondary btn-sm me-2"><i class="bi bi-pencil"></i> Editar</a>
                 <a href="{{ url_for('maintenance.close_work_order', wo_id=wo.id) }}" class="btn btn-sm me-2 btn-secondary"><i class="bi bi-check-circle"></i> Cerrar orden</a>
+            {% endif %}
+            {% if wo.reports|length == 0 and wo.status != "Completada"  or current_user.name == "admin"%}
+                
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{wo.id}}">
+                    <i class="bi bi-trash"></i>Borrar<br>                            
+                </button>
+                {% set modal_id = wo.id %}
+                {% set delete_url = url_for('maintenance.delete_work_order', wo_id=wo.id) %}
+                {% include "__delete_modal.html"%}   
             {% endif %}
         {% endif %}
     </div>

@@ -6,42 +6,68 @@
     {% set href = url_for('public.index') %}
     {% include "__title.html" %}
 
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">Código&nbsp;&nbsp;&nbsp;   </th>                 
-                    <th scope="col">Actividad</th>
-                    <th scope="col" class="text-nowrap">Fecha</th>
-                    <th scope="col" colspan="2"></th>
-                </tr>
-                <tbody>
-                    {% for report in reports %}
-                        <tr >
-                            <td class="pb-5" >
-                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-secondary mb-5">
-                                    {{ report.code }} <br>
-                                </a>
-                            </td>               
-                            <td>
-                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-black">
-                                    {{ report.details.activity }}
-                                </a>
-                            </td>
-                            <td class="text-nowrap">{{ report.details.date }}</td>
-                            <td></td>
-                            <td>
-                                <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-center text-decoration-none text-secondary">
-                                     <i class="bi bi-chevron-right"></i>
-                                </a>                                                
-                            </td>                            
-                        </tr>
-                    {% endfor %}    
-                </tbody>
-            </thead>
+    <section id="search">
+        <div class="col-md-8 mx-auto mb-5">
 
-        </table>
+            <form role="search" class="d-flex justify-content-center">
+                <div class="border border-1 rounded-3 d-flex flex-fill align-items-center">
+                    <label for="docsearch-input">
+                        <i class="bi bi-search  mx-2"></i>
+                    </label>
+                  
+                    <input id="docsearch-input" class="form-control " type="search" placeholder="Buscar" aria-label="Search" style="background: transparent; border:0"
+                    aria-autocomplete="both" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="64">
+                
+                </div>
+            </form>
 
-    </div>
+            <div>      
+                <ul id="docsearch-list" class="list-group">
+                    <!-- Search results will be displayed here -->
+
+                </ul>                
+            </div>    
+
+        </div>
+    </section>
+
+    <section id="report-list">
+        <div class="col-lg-8 mx-auto">
+            {% for report in reports %}
+            <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-decoration-none text-black">
+                <div class="row border border-1 rounded-2 mb-3 mx-1 p-2">                
+                    <div class="col-11 ">                       
+                        <div class="fw-medium mb-1">       
+                            {{ report.code }}
+                        </div>   
+                        <div class="text-truncate">{{ report.details.activity }}</div>
+                        <div class=""> {{ report.details.date }} 
+                            {% if report.details.is_approved %}
+                                <span class="badge bg-success" >
+                                    Aprobado
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary-subtle text-secondary-emphasis" >
+                                    Pendiente
+                                </span>
+                                
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-1 p-0">
+                        <i class="bi bi-chevron-right fs-2 text-muted"></i>
+                    </div>
+                </div>
+            </a>
+           
+            {% endfor %}
+        </div>
+    </section>
+
+   
+
+   
+
+    <script src="{{ url_for('static', filename='js/report_search.js') }}"></script>
 
 {% endblock %}

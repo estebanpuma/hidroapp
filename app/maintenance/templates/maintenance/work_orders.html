@@ -6,8 +6,8 @@
     {% set href = previous_url %}
     {% include "__title.html" %}
 
-    
-    <div class="col-md-8 mx-auto mb-5">
+    <section id="search">
+        <div class="col-md-8 mx-auto mb-5">
         
         
             <form role="search" class="d-flex justify-content-center">
@@ -30,54 +30,43 @@
 
                 </ul>
                 
-            </div>
-        
-         
-    </div>
+            </div>      
+        </div>
+    </section>
+    
 
-    <div class="table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <th scope="col">Código</th>
-                <th scope="col">Fecha</th>
-                <th scope="col">Actividad</th>
-                <th scope="col">Estado</th>
-                <th scope="col" colspan="2"></th>
-            </thead>
-            <tbody>
-                {% for wo in work_orders %}
-                <tr>
-                    <td>
-                        <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-secondary ">
-                            
-                            {{ wo.code }}<i class="bi bi-chevron-right"></i> 
-                        </a>
-                    </td>
-                    <td>{{ wo.request_date }}</td>
-                    <td>{{ wo.activity }}</td>
-                    <td>
-                        {% if wo.status == "Abierta" %}
-                        <span class="badge rounded-pill text-bg-success">{{ wo.status }}</span>
-                        {% else %}
-                        <span class="badge rounded-pill text-bg-secondary">Cerrada</span>
-                        {% endif %}
-                        
-                    </td>
-                    <td></td>
-                    <td>
-                    
-                        <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{wo.id}}">
-                            <i class="bi bi-trash"></i><br>                            
-                        </a>
-                        {% set modal_id = wo.id %}
-                        {% set delete_url = url_for('maintenance.delete_work_order', wo_id=wo.id) %}
-                        {% include "__delete_modal.html"%}   
-                    
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <section id="wo-list">
+        <div id="wo-list-container" class="col-lg-8 mx-auto">
+            {% for wo in work_orders %}
+            <a href="{{url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text-decoration-none">
+                <div class="card mb-3 {% if wo.status == 'Completada' %}bg-light{% endif %}">
+                    <div class="card-body d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-1">{{ wo.code }}</h6>
+                            <p class="card-text mb-1">{{ wo.activity }}</p>
+                            <small class="text-muted">{{ wo.request_date }}</small>
+                        </div>
+                        <div class="d-flex flex-column align-items-end">
+                            {% if wo.status == 'Completada' %}
+                                <span class="badge bg-secondary mb-2">{{wo.status}}</span>
+                            {% else %}
+                                <span class="badge mb-2
+                                    {% if wo.priority_level == 'Inmediata' %}bg-danger
+                                    {% elif wo.priority_level == 'Alta' %}bg-warning
+                                    {% elif wo.priority_level == 'Media' %}bg-info
+                                    {% else %}bg-success{% endif %}">
+                                    {{ wo.priority_level }}
+                                </span>
+                            {% endif %}
+                            <i class="bi bi-chevron-right text-muted fs-2"></i>
+                        </div>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        
+    </section>
+
     <script src="{{ url_for('static', filename='js/ot_search.js') }}"></script>
 {% endblock %}

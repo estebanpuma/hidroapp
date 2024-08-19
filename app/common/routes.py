@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 
 from app.pdf import create_pdf
 from . import common_bp
-from .models import Activity, Module, Report, ReportImages, WorkOrder, ReportTeam
+from .models import Activity, Module, Report, ReportImages, WorkOrder, ReportTeam, ReportDetail
 
 from app.utils import get_prev_ref, already_exist, get_users_list
 from .datetime_format import *
@@ -253,7 +253,7 @@ def delete_report(report_id):
 def reports():
     previous_url = get_prev_ref()
     title = "Reportes"
-    if current_user.role.name == "Operador":
+    if current_user.role.name in ["admin", "Operador"]:
         reports = Report.query.order_by(Report.id.desc()).all()
     else:
         reports = Report.query.join(Report.details).filter(Report.details.has(responsible_id=current_user.id)).order_by(Report.id.desc()).all()
@@ -294,7 +294,7 @@ def report_sshh():
         files = request.files.getlist("files")
         responsible_id = current_user.id
         place = request.form.get("place")
-
+    pass
 
 @common_bp.route("/media/reports/<filename>")
 def media_report(filename):
@@ -303,10 +303,60 @@ def media_report(filename):
         current_app.config["REPORT_IMAGES_DIR"]
     )
     return send_from_directory(dir_path, filename)
-    
-    
 
+
+
+@common_bp.route("/approve_report/<int:report_id>")
+@login_required
+def approve_report(report_id):
+    report = Report.query.get_or_404(report_id)
+    if current_user.role.name in ["Operador", "admin"]:
+        report.details.is_approved=True
+        report.details.approved_by=current_user.id
+        try:
+            report.save()
+        except:
+            flash("Ocurrió un error, no se pudo aprobar el reporte", "danger")
+    else:
+        flash("No tiene permisos para aprobar reporte", "warning")
+    return redirect( url_for("common.report_view", report_id=report.id) )
     
+    
+@common_bp.route('/report_search')
+def report_search():
+    from app.admin.models import User
+    try:
+        query = request.args.get('q', '').lower()
+        results_by_activity = ReportDetail.query.filter(ReportDetail.activity.ilike(f'%{query}%')).all()
+        results_by_responsible = ReportDetail.query.join(User, ReportDetail.responsible_id == User.id) \
+                                                .filter(User.name.ilike(f'%{query}%')).all()
+                                                
+        
+        results_by_code = ReportDetail.query.join(Report).filter(Report.code.ilike(f"%{query}%")).all()
+       
+        # Supongamos que `request_date` es una cadena en formato 'YYYY-MM-DD'
+        results_by_date = ReportDetail.query.filter(ReportDetail.date.ilike(f'%{query}%')).all()
+        
+        # Combinar los resultados, eliminando duplicados
+        results = list({report.id: report for report in results_by_activity + results_by_responsible + results_by_date + results_by_code}.values())
+        
+        # Serializar los resultados
+        results_serialized = [
+            {
+                'id': report.report_id,
+                'activity': report.activity,
+                'request_date': report.date.strftime('%Y-%m-%d'),
+                'responsible': report.responsible.name,
+                'code': report.report.code
+            }
+            for report in results
+        ]
+        
+        return jsonify({'results': results_serialized})
+    except Exception as e:
+        flash(f"error {e}", "danger")
+        
+        return jsonify({f"error {str(e)}": "Internal Server Error"}), 500
 
 
 

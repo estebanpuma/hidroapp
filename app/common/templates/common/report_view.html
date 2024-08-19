@@ -9,37 +9,79 @@
     <div class="card mt-5">
         <div class="card-header bg-light">
             <div class="card-title">
-                <i class="bi bi-file-earmark-check"> Detalles del trabajo</i>
+                <i class="bi bi-file-earmark-check "> Detalles del trabajo</i>
             </div>
         </div>
         <div class="card-body">
             <div>
                 <h5 class="card-subtitle mb-3 text-muted text-end">Código: {{report.code}}</h5>
             </div>
-            <div class="row mb-3 border border-1 text-center">
-                <div class="col border border-1">
-                        <i class="bi bi-calendar-week"> Fecha:</i>
-                        <h6 class="mt-2 mb-2 col">{{ report.details.date }}</h6>
-                </div>
-                <div class="col border border-1">
-                        <i class="bi bi-clock"> Hora inicio:</i>
-                        <h6 class="mt-2 mb-2 col ">{{ report.details.start_hour }}</h6>
-                </div>
-                <div class="col border border-1">
-                        <i class="bi bi-clock"> Hora fin:</i>
-                        <h6 class="mt-2 mb-2 col">{{ report.details.end_hour }}</h6>
+            <div class="row mb-5">
+                <div class="col-sm-4">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                <i class="bi bi-calendar-week fs-5 me-2 text-primary-emphasis"> </i>
+                                <span class="fw-bold">Fecha:</span>
+                            </div>
+                            <p class="col text-nowrap m-auto">{{ report.details.date }}</p>
+                        </div>      
                     </div>
+                        
+                </div>
+                <div class="col-sm-4">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                <i class="bi bi-clock fs-5 me-2 text-primary-emphasis"> </i>
+                                <span class="fw-bold">Inicio:</span>
+                            </div>
+                            <p class="col text-nowrap m-auto p-0">{{ report.details.start_hour.strftime("%H:%M") }}</p>
+                        </div>
+ 
+                    </div>
+                        
+                </div>
+                <div class="col-sm-4">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="d-flex align-items-center col">
+                                <i class="bi bi-clock fs-5 me-2 text-primary-emphasis"> </i>
+                                <span class="fw-bold">Fin:</span>
+                            </div>         
+                            <p class="col text-nowrap m-auto p-0">{{ report.details.end_hour.strftime("%H:%M") }}</p>                 
+                        </div>
+                    </div>
+                </div>
                 
-                <div class="col-sm-3 border border-1">
-                        <i class="bi bi-person"> Responsable:</i>
-                        <h6 class="mt-2 mb-2 col">{{ report.details.responsible.name }}</h6>
+                <div class="col-sm-6">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                <i class="bi bi-person fs-5 me-2 text-primary-emphasis"> </i>
+                                <span class="fw-bold">Responsable:</span>
+                            </div>
+                            <p class="col text-nowrap m-auto">{{ report.details.responsible.name }}</p>
+                        </div> 
+                    </div>         
+                </div>
+                <div class="col-sm-6">
+                    <div class="border rounded p-2">
+                        <div class="row">
+                            <div class="col d-flex align-items-center">
+                                <i class="bi bi-person-check fs-5 me-2 text-primary-emphasis"> </i>
+                                <span class="fw-bold">Aprobado por:</span>
+                            </div>
+                            <p class="col text-nowrap m-auto">{{ report.details.approver.name }}</p>
+                        </div> 
+                    </div>         
                 </div>
                 
             </div>
 
             
 
-            <h2 class="card-title mb-2">{{ report.details.activity }}</h2>
+            <h2 class="card-title mb-4">{{ report.details.activity }}</h2>
             
             
             
@@ -49,10 +91,7 @@
                 
             </div>
 
-            <div class="mb-3">
-                <p class="card-text fw-medium">Duración de la actividad: </p>
-                <p class="card-text" ><i class="bi bi-clock"></i> Total: {{ report.details.total_time | round(2) }} horas  </p>
-            </div>
+            
 
             <div class="mb-3">
                 <p class="card-text fw-medium">Equipo de trabajo: </p>
@@ -73,7 +112,11 @@
                    
              
             </div>
-            
+
+            <div class="mb-3">
+                <p class="card-text fw-medium">Duración de la actividad: </p>
+                <p class="card-text" ><i class="bi bi-clock"></i> Total: {{ report.details.total_time | round(2) }} horas  </p>
+            </div>
             
             <div class="mb-3">
                 <p class="card-text fw-medium">Observaciones: </p>
@@ -90,13 +133,22 @@
 
             <div class="d-flex justify-content-end">
                 <a href="{{ url_for('common.generate_pdf', report_id=report.id)}}" class="btn btn-primary btn-sm me-2"><i class="bi bi-file-pdf"></i>PDF</a>
-                <a href="{{ url_for('common.edit_report', report_id=report.id) }}" class="btn btn-outline-secondary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
-                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{report.id}}">
-                    <i class="bi bi-trash"></i>Borrar<br>                            
-                </button>
-                {% set modal_id = report.id %}
-                {% set delete_url = url_for('common.delete_report', report_id=report.id) %}
-                {% include "__delete_modal.html"%}   
+                {% if current_user.id == report.details.responsible_id or current_user.name == "admin" %}
+                    {% if not report.details.is_approved or current_user.name == "admin" %}
+                    <a href="{{ url_for('common.edit_report', report_id=report.id) }}" class="btn btn-outline-secondary btn-sm me-2"><i class="bi bi-pencil"></i>Editar</a>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal-{{report.id}}">
+                        <i class="bi bi-trash"></i>Borrar<br>                            
+                    </button>
+                    {% set modal_id = report.id %}
+                    {% set delete_url = url_for('common.delete_report', report_id=report.id) %}
+                    {% include "__delete_modal.html"%}   
+                    {% endif %}
+                {% endif %}
+                {% if current_user.role.name == "Operador" and not report.details.is_approved %}
+                    <a href="{{url_for('common.approve_report', report_id=report.id)}}" class="text-decoration-none btn btn-success" >
+                        <i class="bi bi-file-earmark-check"></i>Aprobar
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>

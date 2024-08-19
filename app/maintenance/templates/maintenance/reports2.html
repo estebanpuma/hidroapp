@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    
+    <div class="col-md-8 mx-auto mb-5">
+        
+        
+            <form role="search" class="d-flex justify-content-center">
+                <div class="border border-1 rounded-3 d-flex flex-fill align-items-center">
+                    <label for="docsearch-input">
+                        <i class="bi bi-search  mx-2"></i>
+                    </label>
+                  
+                    <input id="docsearch-input" class="form-control " type="search" placeholder="Buscar" aria-label="Search" style="background: transparent; border:0"
+                    aria-autocomplete="both" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="64">
+                
+                </div>
+            
+            </form>
+
+            <div>
+            
+                <ul id="docsearch-list" class="list-group">
+                    <!-- Search results will be displayed here -->
+
+                </ul>
+                
+            </div>
+        
+         
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <th scope="col">Código</th>
+                <th scope="col">Fecha</th>
+                <th scope="col">Actividad</th>
+                <th scope="col">Estado</th>
+                <th scope="col" colspan="2"></th>
+            </thead>
+            <tbody>
+                {% for wo in work_orders %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-secondary ">
+                            
+                            {{ wo.code }}<i class="bi bi-chevron-right"></i> 
+                        </a>
+                    </td>
+                    <td>{{ wo.request_date }}</td>
+                    <td>{{ wo.activity }}</td>
+                    <td>
+                        {% if wo.status == "Abierta" %}
+                        <span class="badge rounded-pill text-bg-success">{{ wo.status }}</span>
+                        {% else %}
+                        <span class="badge rounded-pill text-bg-secondary">Cerrada</span>
+                        {% endif %}
+                        
+                    </td>
+                    <td></td>
+                    <td>
+                    
+                        <a href="" class="text-decoration-none text-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal-{{wo.id}}">
+                            <i class="bi bi-trash"></i><br>                            
+                        </a>
+                        {% set modal_id = wo.id %}
+                        {% set delete_url = url_for('maintenance.delete_work_order', wo_id=wo.id) %}
+                        {% include "__delete_modal.html"%}   
+                    
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <script src="{{ url_for('static', filename='js/ot_search.js') }}"></script>
+{% endblock %}

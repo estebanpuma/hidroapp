@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy.exc import SQLAlchemyError
 import os
 from flask import current_app, flash
+from flask_login import current_user
 from datetime import datetime, timedelta, timezone
 from app.utils import this_year
 
@@ -149,6 +150,7 @@ class Report(db.Model, BaseModel):
     code = db.Column(db.String, unique=True, nullable=False)
     mod_id = db.Column(db.Integer, db.ForeignKey("modules.id"))
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_by = db.Column(db.String(64))
     
     work_order_id = db.Column(db.Integer, db.ForeignKey("work_order.id"))
     work_order = db.relationship("WorkOrder", back_populates="reports")
@@ -188,11 +190,13 @@ class ReportDetail(db.Model, BaseModel):
     n_external = db.Column(db.Integer, default = 0)
     notes = db.Column(db.Text)
     is_approved = db.Column(db.Boolean, default=False) 
+    approved_by = db.Column(db.Integer, db.ForeignKey("app_users.id"), nullable = True)
     
     team = db.relationship("ReportTeam", back_populates="report_detail", cascade="all, delete-orphan")
     report = db.relationship("Report", back_populates="details")
     images = db.relationship("ReportImages", back_populates="report_detail", cascade="all, delete-orphan")
-    responsible = db.relationship("User")
+    responsible = db.relationship("User", foreign_keys=[responsible_id])
+    approver = db.relationship("User", foreign_keys=[approved_by] )
     
     @property
     def n_team(self):

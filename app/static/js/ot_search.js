@@ -17,14 +17,19 @@ document.addEventListener('DOMContentLoaded', function() {
                         const a = document.createElement("a");
                         a.href = `/maintenance/OT/view/${item.id}`;
                         a.className = "text-decoration-none text-black ms-2 me-auto";
+                        const divCode = document.createElement("div");
+                        divCode.className = "fw-medium fs-6";
+                        divCode.textContent = item.code;
                         const div1 = document.createElement("div");
-                        div1.className = "fw-bold";
+                        div1.className = "fw-normal";
                         div1.textContent = item.activity;
                         const div2 = document.createElement("div");
+                        div2.className = "fw-light"
                         div2.textContent =  item.responsible + " - " + item.request_date;
                         const i = document.createElement("i")
                         i.className = "bi bi-chevron-right"
 
+                        a.appendChild(divCode);
                         a.appendChild(div1);
                         a.appendChild(div2);
                         
