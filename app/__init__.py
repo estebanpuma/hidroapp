@@ -2,12 +2,15 @@ from flask import Flask, g, request, redirect, render_template
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
-
+from flask_socketio import SocketIO
+from flask_cors import CORS
+from sqlalchemy.exc import InvalidRequestError
 
 db = SQLAlchemy()
 migrate = Migrate()
 login_manager = LoginManager()
+
+socketio = SocketIO(cors_allowed_origins="*")
 
 
 def create_app(config):
@@ -30,8 +33,10 @@ def create_app(config):
         # Este procesador de contexto hace que mods esté disponible globalmente en todas las plantillas
         return dict(mods=g.mods if 'mods' in g else [])
     
+    CORS(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    socketio.init_app(app)
     
     from .auth import auth_bp
     app.register_blueprint(auth_bp, url_prefix="/auth")
@@ -69,6 +74,9 @@ def create_app(config):
     from .sst import sst_bp
     app.register_blueprint(sst_bp)
     
+    from .notifications import notifications_bp
+    app.register_blueprint(notifications_bp)
+    
     # Custom error handlers
     register_error_handlers(app)
     
@@ -91,4 +99,17 @@ def register_error_handlers(app):
     def error_404_handler(e):
         return render_template("404.html"), 404
         
-        
+    @app.errorhandler(TypeError)
+    def type_error_handler(e):
+        return render_template("500.html"), 500   
+    
+    
+    @app.errorhandler(InvalidRequestError)
+    def sql_error_handler(e):
+        return render_template("500.html"), 500   
+    
+    
+    @app.errorhandler(AttributeError)
+    def none_type_error_handler(e):
+        return render_template("500.html"), 500   
+    

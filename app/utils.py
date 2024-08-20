@@ -8,6 +8,12 @@ import uuid
 
 from app.common.datetime_format import *
 
+import pytz
+
+
+def get_current_time_quito():
+    quito_tz = pytz.timezone('America/Guayaquil')
+    return datetime.now(quito_tz)
 
 
 def get_users_list():
@@ -17,6 +23,25 @@ def get_users_list():
     
     return users
 
+
+def get_operators_list():
+    from app.admin.models import User, Role
+    operators = User.query.join(Role).filter(Role.name == "Operador").all()
+    
+    return operators
+
+
+def get_ma_workers():
+    from app.admin.models import User, Role
+    ma = User.query.join(Role).filter(Role.name == "Monitor Ambiental").all()
+    
+    return ma
+
+def get_ap_workers():
+    from app.admin.models import User, Role
+    ap = User.query.join(Role).filter(Role.name == "Ayudantes de operación").all()
+    
+    return ap
 
 def get_role_list():
     from app.admin.models import Role

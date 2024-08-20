@@ -56,9 +56,23 @@
         </div>
         
         <div class="p-2">
-            <a  href="#" class="link-dark">
-                <i class="bi bi-bell" style="font-size: 1.5rem"></i>
-            </a>
+            <button type="button" class="btn p-0 position-relative" id="bell-container" data-bs-toggle="offcanvas" data-bs-target="#notificationsMenu" aria-controls="notificationsMenu">
+                <i class="bi bi-bell" style="font-size: 1.6rem"></i>
+                <span id="notifications_container"></span>
+            </button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" data-bs-backdrop="false"  id="notificationsMenu" aria-labelledby="notificationsMenuLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="notificationsLabel">Notificaciones</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close">
+                    
+                  </button>
+                </div>
+                <div class="offcanvas-body p-0">
+                  <ul id="notificationList" class="list-group list-group-flush" >
+
+                  </ul>
+                </div>
+              </div>
         </div>
         
         <div class="p-2 ">

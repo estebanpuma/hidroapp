@@ -3,8 +3,10 @@ from sqlalchemy.exc import SQLAlchemyError
 import os
 from flask import current_app, flash
 from flask_login import current_user
-from datetime import datetime, timedelta, timezone
-from app.utils import this_year
+from datetime import datetime, timedelta
+from app.utils import this_year, get_current_time_quito
+
+
 
 class BaseModel():
     __abstract__ = True
@@ -149,7 +151,7 @@ class Report(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String, unique=True, nullable=False)
     mod_id = db.Column(db.Integer, db.ForeignKey("modules.id"))
-    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=get_current_time_quito)
     created_by = db.Column(db.String(64))
     
     work_order_id = db.Column(db.Integer, db.ForeignKey("work_order.id"))
@@ -316,3 +318,6 @@ class ToiletRegImg(db.Model, BaseModel):
         # Eliminar el registro de la base de datos
         db.session.delete(self)
         db.session.commit()
+        
+        
+

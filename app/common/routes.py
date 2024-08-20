@@ -3,6 +3,8 @@ import os
 from flask import render_template, redirect, url_for, request, flash, current_app, send_from_directory, make_response, session, jsonify
 from flask_login import current_user, login_required
 
+from app import socketio
+
 from app.pdf import create_pdf
 from . import common_bp
 from .models import Activity, Module, Report, ReportImages, WorkOrder, ReportTeam, ReportDetail
@@ -122,6 +124,7 @@ def report(mod_id):
     previous_url = get_prev_ref()
     users = get_users_list()
     users = [{'id': user.id, 'name': user.name} for user in users]
+    
     mod = Module.query.get_or_404(mod_id)
     if mod.code == "MAN" and wo_id == None:
         return redirect(url_for("maintenance.work_orders", report="report"))
@@ -140,7 +143,9 @@ def report(mod_id):
                         form=form,
                         files=files,
                         wo_id=wo_id)
-        
+            
+            flash("Reporte guardado satisfactoriamente", "success")
+            
         except:
             files.clear()
             print("entra a excet")
@@ -270,6 +275,8 @@ def report_view(report_id):
     images = ReportImages.query.filter_by(report_id=report.id).all()
     title = "Reporte"
     previous_url = get_prev_ref()
+    if previous_url == request.url:
+        previous_url = url_for("common.reports")
     team = ReportTeam.query.filter_by(report_id=report_id).all()
     #for rp in team:
     #    if rp.report_detail_id == None:
@@ -358,7 +365,7 @@ def report_search():
         
         return jsonify({f"error {str(e)}": "Internal Server Error"}), 500
 
-
+    
 
 @common_bp.route('/generate_pdf/<int:report_id>')
 @login_required

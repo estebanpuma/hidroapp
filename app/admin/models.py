@@ -1,7 +1,7 @@
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db 
-from app.common.models import BaseModel, Module, Month
+from app.common.models import BaseModel
 
 
 
@@ -18,7 +18,8 @@ class User(db.Model, UserMixin, BaseModel):
     
     role = db.relationship("Role")
     report_team= db.relationship('ReportTeam', back_populates='user')
-    
+    notifications = db.relationship('UserNotification', back_populates='recipients')
+
     def __repr__(self):
         return self.name
 

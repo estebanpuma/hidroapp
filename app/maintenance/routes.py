@@ -7,7 +7,7 @@ from app.common.models import Report, Module, WorkOrder
 from app.admin.models import User
 from app.utils import get_prev_ref, get_users_list, save_images
 from app.common.datetime_format import get_today, format_datetime, format_time
-
+from .utils import create_wo_notification
 
 from . import maintenance_bp
 
@@ -102,7 +102,7 @@ def work_order(wo_id=None):
         activity = request.form.get("activity")
         description = request.form.get('description')
         responsible_id = request.form.get("responsible_id")
-        mod_id = request.form.get("mod_id")
+        mod_id = int(request.form.get("mod_id"))
         priority_level = request.form.get("priority_level")
         assigned_personnel = request.form.get("assigned_personnel")
         
@@ -111,23 +111,31 @@ def work_order(wo_id=None):
             work_order.activity = activity
             work_order.description = description
             work_order.responsible_id = responsible_id
-            work_order.mod_id = int(mod_id)
+            work_order.mod_id = mod_id
             work_order.assigned_personnel_id = assigned_personnel
             work_order.priority_level = priority_level
             
         else:
             try:
-                work_order = WorkOrder(mod_id = int(mod_id),
+                work_order = WorkOrder(mod_id = int(mod_id) ,
                                         request_date = request_date,
                                         responsible_id = responsible_id,
                                         activity = activity,
                                         description = description,
-                                        assigned_personnel = assigned_personnel,
+                                        assigned_personnel_id = assigned_personnel,
                                         priority_level = priority_level)
-            except TypeError:
-                flash(f"error mod_id {mod_id}")
+            except Exception as e:
+                flash(f"error mod_id {(type(mod_id), mod_id), (type(responsible_id), responsible_id)} , error:{e}")
+                return render_template("maintenance/work_order.html",
+                           title = title,
+                           previous_url = previous_url,
+                           work_order = work_order,
+                           users = users,
+                           today = today,
+                           mods = mods)
         try:
             work_order.save()
+            create_wo_notification(user_id=assigned_personnel, wo_id=work_order.id)
             flash("OT guardada correctamente", "success")
         except:
             flash("Algo salio mal con la OT", "danger")

@@ -1,13 +1,14 @@
 import io
 
 from flask import redirect, url_for, flash, request
+from flask_login import current_user
 
 from werkzeug.datastructures import FileStorage
 
 from PIL.ImageTk import Image
 import piexif
 
-from app.utils import save_images
+from app.utils import save_images, get_ap_workers, get_operators_list, get_ma_workers
 from .datetime_format import *
 from .models import Activity, Module, Report, ReportDetail, MaintenanceDetails, MaintenanceSpareParts, ReportImages, ReportTeam
 
@@ -122,7 +123,10 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
         if is_new_report:
             report.delete()
         raise RuntimeError("err")
-           
+    
+    if is_new_report:       
+        create_notification(user_id=current_user.id, report_id=report.id)     
+      
            
 def get_image_metadata(image_file):
     # Abre la imagen usando PIL
@@ -196,3 +200,43 @@ def process_and_save_images(files, detail, report_id):
             # Si falla el guardado de una imagen, eliminar todas las imágenes guardadas
             
             raise RuntimeError(f"Error guardando {img.filename}: {str(e)}")
+        
+        
+
+def create_notification(user_id, report_id=None):
+    if user_id:
+        try:
+            
+           
+            from app.admin.models import User
+            user = User.query.get(user_id)
+        
+            from app.notifications.models import Notification, UserNotification
+
+            if report_id:
+                report = Report.query.get(report_id)
+                new_notification = Notification(report_id = report_id, 
+                                                message = f"{user.name} subió un reporte")
+                
+            
+            else:
+                flash("No se proporcionó un ID de reporte o actividad.", "warning")
+                return
+               
+            new_notification.save()
+           
+            operators = get_operators_list()
+            
+            for user in operators:  # Suponiendo que recipient_users es una lista de usuarios
+                user_notification = UserNotification(
+                user_id=user.id,
+                notification_id=new_notification.id,
+                is_read=False  # Inicialmente, la notificación no se ha leído
+                )
+                user_notification.save()
+            
+            
+            
+        except:
+            flash(f"No se pudo generar notificación para el usuario id: {user_id}", "warning")
+            

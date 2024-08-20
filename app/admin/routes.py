@@ -1,7 +1,9 @@
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user
 
-from .models import User, Role, Module, RolePermission, Month
+from .models import User, Role, RolePermission
+
+from app.common.models import Module, Month
 
 from app.vars_const import months
 from . import admin_bp
