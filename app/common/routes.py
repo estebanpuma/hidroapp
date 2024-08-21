@@ -12,7 +12,7 @@ from .models import Activity, Module, Report, ReportImages, WorkOrder, ReportTea
 from app.utils import get_prev_ref, already_exist, get_users_list
 from .datetime_format import *
 
-from .utils import save_report
+from .utils import save_report, create_review_notification
 
 
 
@@ -192,6 +192,7 @@ def edit_report(report_id):
                              form=form,
                              files=files,
                              report = report)
+            
             flash("Reporte guardado exitosamente", "success")
             return redirect(url_for("common.reports"))
         except:
@@ -249,6 +250,7 @@ def delete_report(report_id):
     except:
         flash("No se puedo eliminar el registro", "danger")
         return redirect(url_for("common.reports"))
+
     
     return redirect(url_for("common.reports"))
 
@@ -259,7 +261,7 @@ def reports():
     previous_url = get_prev_ref()
     title = "Reportes"
     if current_user.role.name in ["admin", "Operador"]:
-        reports = Report.query.order_by(Report.id.desc()).all()
+        reports = Report.query.join(ReportDetail).order_by(ReportDetail.date.desc()).all()
     else:
         reports = Report.query.join(Report.details).filter(Report.details.has(responsible_id=current_user.id)).order_by(Report.id.desc()).all()
     return render_template("common/reports.html", 
@@ -288,6 +290,24 @@ def report_view(report_id):
                            report = report,
                            team = team,
                            images = images)
+
+
+@common_bp.route("/report_review/<int:report_id>", methods=["GET", "POST"])
+@login_required
+def report_review(report_id):
+    report = Report.query.get_or_404(report_id)
+    title = "Revisión"
+    previous_url = url_for("common.report_view", report_id=report_id)
+    
+    if request.method == "POST":
+        report.review = request.form.get("review")
+        report.save()
+        create_review_notification(report_id=report_id, user_id=current_user.id )
+        return redirect(url_for("common.reports"))
+    return render_template("common/report_review.html",
+                           title = title,
+                           previous_url = previous_url,
+                           report = report)
 
 
 @common_bp.route("/report/sshh")

@@ -6,6 +6,26 @@
     {% set href=previous_url %}
     {% include "__title.html" %}
 
+    <section id="review">
+        
+            {% if report.details.is_approved is false %}
+                {% if report.review  %}
+                <div class="border rounded ">
+                    <div class=" border-bottom bg-body-tertiary px-2">
+                        <p>Se ha solicitado un cambio</p>
+                        
+                    </div>
+                    <div class="px-2">
+                        <p>{{ report.review}}</p>
+                    </div>
+                    
+                </div>
+                    
+                {% endif %}
+            {% endif %}
+        
+    </section>
+
     <div class="card mt-5">
         <div class="card-header bg-light">
             <div class="card-title">
@@ -145,7 +165,10 @@
                     {% endif %}
                 {% endif %}
                 {% if current_user.role.name == "Operador" and not report.details.is_approved %}
-                    <a href="{{url_for('common.approve_report', report_id=report.id)}}" class="text-decoration-none btn btn-success" >
+                    <a href="{{url_for('common.report_review', report_id=report.id)}}" class="text-decoration-none btn btn-warning btn-sm me-2 " >
+                        <i class="bi bi-exclamation-triangle"></i>Solicitar cambio
+                    </a>
+                    <a href="{{url_for('common.approve_report', report_id=report.id)}}" class="text-decoration-none btn btn-success btn-sm me-2" >
                         <i class="bi bi-file-earmark-check"></i>Aprobar
                     </a>
                 {% endif %}

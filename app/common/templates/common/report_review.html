@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %} {{title}} {% endblock %}
+
+{% block content %}
+    {% set href = previous_url %}
+    {% include "__title.html" %}
+
+    <section id="form">
+        <form action="" method="post">
+            <div class="mb-3">
+                <label for="review">Solicitar cambio</label>
+                <textarea type="text" name="review" id="review" class="form-control">
+                </textarea>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href= "{{previous_url}}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </section>
+
+{% endblock %}

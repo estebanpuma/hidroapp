@@ -121,6 +121,7 @@ class WorkOrder(db.Model, BaseModel):
     module = db.relationship("Module", back_populates="work_orders")
     
     reports = db.relationship("Report", back_populates="work_order", cascade="all, delete-orphan")
+    notifications = db.relationship('Notification', backref='work_order', cascade="all, delete-orphan")
     
     def __init__(self, **kwargs):
         super(WorkOrder, self).__init__(**kwargs)
@@ -153,13 +154,16 @@ class Report(db.Model, BaseModel):
     mod_id = db.Column(db.Integer, db.ForeignKey("modules.id"))
     created_at = db.Column(db.DateTime, default=get_current_time_quito)
     created_by = db.Column(db.String(64))
-    
+    review = db.Column(db.Text, nullable = True)
+    outstanding = db.Column(db.Text, nullable = True)
     work_order_id = db.Column(db.Integer, db.ForeignKey("work_order.id"))
     work_order = db.relationship("WorkOrder", back_populates="reports")
     
     module = db.relationship("Module", back_populates="reports")
     details = db.relationship("ReportDetail", back_populates="report", cascade="all, delete-orphan", uselist=False)
     maintenance_details = db.relationship("MaintenanceDetails", back_populates="report", cascade="all, delete-orphan", uselist=False)
+    notifications = db.relationship('Notification', backref='report', cascade="all, delete-orphan")
+    
     
     @staticmethod
     def generate_code(mod_id):

@@ -50,7 +50,6 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
     
     detail.report_id = report.id
     detail.activity = form.get("activity")
-    print(form.get("activity"))
     detail.description = form.get("description")
     detail.responsible_id = form.get("responsible_id")
     date = form.get("date")
@@ -126,6 +125,9 @@ def save_report(mod_id, form, files=None, report=None, wo_id=None ):
     
     if is_new_report:       
         create_notification(user_id=current_user.id, report_id=report.id)     
+    else:
+        if report.review:
+            create_notification(user_id=current_user.id, report_id=report.id, review=True)
       
            
 def get_image_metadata(image_file):
@@ -203,26 +205,23 @@ def process_and_save_images(files, detail, report_id):
         
         
 
-def create_notification(user_id, report_id=None):
-    if user_id:
+def create_notification(user_id, report_id, review=None):
+    if user_id and report_id:
         try:
             
-           
             from app.admin.models import User
             user = User.query.get(user_id)
         
             from app.notifications.models import Notification, UserNotification
 
-            if report_id:
-                report = Report.query.get(report_id)
+            if review:
+                new_notification = Notification(report_id = report_id, 
+                                                message = f"{user.name} modificó un reporte")
+                
+            else:
                 new_notification = Notification(report_id = report_id, 
                                                 message = f"{user.name} subió un reporte")
-                
-            
-            else:
-                flash("No se proporcionó un ID de reporte o actividad.", "warning")
-                return
-               
+
             new_notification.save()
            
             operators = get_operators_list()
@@ -234,9 +233,45 @@ def create_notification(user_id, report_id=None):
                 is_read=False  # Inicialmente, la notificación no se ha leído
                 )
                 user_notification.save()
+                  
+        except:
+            flash(f"No se pudo generar notificación para el usuario id: {user_id}", "warning")
+            
+    else:
+        flash("No se proporcionó un ID de reporte o actividad.", "warning")
+        return
+            
+
+def create_review_notification(user_id, report_id):
+    if user_id and report_id:
+        try:
+            
+           
+            from app.admin.models import User
+            user = User.query.get(user_id)
+        
+            from app.notifications.models import Notification, UserNotification
+
+            
+            report = Report.query.get(report_id)
+            new_notification = Notification(report_id = report_id, 
+                                            message = f"{user.name} solicitó un cambio")
+                
+
+            new_notification.save()
+           
+            
+            user_notification = UserNotification(
+            user_id=report.details.responsible_id,
+            notification_id=new_notification.id,
+            is_read=False 
+            )
+            user_notification.save()
             
             
             
         except:
             flash(f"No se pudo generar notificación para el usuario id: {user_id}", "warning")
-            
+    else:
+        flash("No se proporcionó un ID de reporte o actividad para la notificación.", "warning")
+        return

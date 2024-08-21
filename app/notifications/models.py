@@ -5,12 +5,12 @@ from app.utils import get_current_time_quito
 
 class Notification(db.Model, BaseModel):
     id = db.Column(db.Integer, primary_key=True)
-    report_id = db.Column(db.Integer, db.ForeignKey('report.id'), nullable=True)
-    wo_id = db.Column(db.Integer, db.ForeignKey('work_order.id'), nullable=True)
+    report_id = db.Column(db.Integer, db.ForeignKey('report.id', ondelete='CASCADE'), nullable=True)
+    wo_id = db.Column(db.Integer, db.ForeignKey('work_order.id', ondelete='CASCADE'), nullable=True)
     message = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=get_current_time_quito)
     
-    user_notifications = db.relationship('UserNotification', back_populates='notification')
+    user_notifications = db.relationship('UserNotification', back_populates='notification', cascade="all, delete-orphan", uselist=False)
    
 class UserNotification(db.Model, BaseModel):
     __tablename__ = 'user_notifications'

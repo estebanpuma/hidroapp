@@ -31,7 +31,7 @@
         </div>
     </section>
 
-    <section id="report-list">
+    <section id="report-container-view" class="d-block d-md-none">
         <div class="col-lg-8 mx-auto">
             {% for report in reports %}
             <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text-decoration-none text-black">
@@ -43,14 +43,17 @@
                         <div class="text-truncate">{{ report.details.activity }}</div>
                         <div class=""> {{ report.details.date }} 
                             {% if report.details.is_approved %}
-                                <span class="badge bg-success" >
+                                <span class="badge bg-success mb-2">
                                     Aprobado
                                 </span>
-                            {% else %}
-                                <span class="badge bg-secondary-subtle text-secondary-emphasis" >
-                                    Pendiente
+                            {% elif report.review %}
+                                <span class="badge border border-danger bg-light text-danger mb-2">
+                                    Cambio solicitado
                                 </span>
-                                
+                            {% else %}
+                                <span class="badge bg-secondary mb-2">
+                                    Pendiente 
+                                </span>
                             {% endif %}
                         </div>
                     </div>
@@ -65,7 +68,73 @@
     </section>
 
    
+    <section id="report-table-view" class="d-none d-md-block">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th scope="col">Actividad</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Responsable</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col" colspan="2"></th>
+                </thead>
+                <tbody>
+                    {% for report in reports %}
+                    <tr>
+                        <td>
+                            <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text_center text-decoration-none text-black">
+                                <div class="text-muted">
+                                    <small>{{ report.code }}</small>
+                                </div>
+                                <div class="">
+                                    <div >
+                                        {{ report.details.activity }}
+                                    </div>
+                                </div>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text_center text-decoration-none text-black text-nowrap">
+                                {{ report.details.date }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text_center text-decoration-none text-black ">
+                                {{ report.details.responsible.name }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if report.details.is_approved %}
+                                <span class="badge border border-success bg-light text-success mb-2">
+                                    Revisado
+                                </span>
+                            {% elif report.review %}
+                                <span class="badge border border-warning bg-white text-warning mb-2">
+                                    Cambio 
+                                    <div>solicitado</div>
+                                    
+                                </span>
+                            {% else %}
+                                <span class="badge border border-secondary bg-light text-black mb-2">
+                                    Pendiente 
+                                </span>
+                            {% endif %}
+                            
+                        </td>
+                        <td></td>
+                        <td>
+                            <a href="{{url_for('common.report_view', report_id=report.id)}}" class="text_center text-decoration-none text-secondary ">
+                                <i class="bi bi-chevron-right"></i> 
+                            </a>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
+    </section>
    
 
     <script src="{{ url_for('static', filename='js/report_search.js') }}"></script>

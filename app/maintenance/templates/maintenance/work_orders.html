@@ -35,7 +35,7 @@
     </section>
     
 
-    <section id="wo-list">
+    <section id="work-order-container-view" class="d-block d-md-none">
         <div id="wo-list-container" class="col-lg-8 mx-auto">
             {% for wo in work_orders %}
             <a href="{{url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text-decoration-none">
@@ -66,6 +66,63 @@
             {% endfor %}
         </div>
         
+    </section>
+
+    <section id="work-order-table-view" class="d-none d-md-block">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <th scope="col">Código</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Actividad</th>
+                    <th scope="col">Prioridad</th>
+                    <th scope="col" colspan="2"></th>
+                </thead>
+                <tbody>
+                    {% for wo in work_orders %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-secondary ">
+                                {{ wo.code }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-black text-nowrap">
+                                {{ wo.request_date }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-black ">
+                                {{ wo.activity }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if wo.status == 'Completada' %}
+                                <span class="badge bg-secondary mb-2">{{wo.status}}</span>
+                            {% else %}
+                                <span class="badge mb-2
+                                    {% if wo.priority_level == 'Inmediata' %}bg-danger
+                                    {% elif wo.priority_level == 'Alta' %}bg-warning
+                                    {% elif wo.priority_level == 'Media' %}bg-info
+                                    {% else %}bg-success{% endif %}">
+                                    {{ wo.priority_level }}
+                                </span>
+                            {% endif %}
+                            
+                        </td>
+                        <td></td>
+                        <td>
+                            <a href="{{ url_for('maintenance.work_order_view', wo_id=wo.id)}}" class="text_center text-decoration-none text-secondary ">
+                                <i class="bi bi-chevron-right"></i> 
+                            </a>
+                            
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
     </section>
 
     <script src="{{ url_for('static', filename='js/ot_search.js') }}"></script>

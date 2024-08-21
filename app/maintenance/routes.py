@@ -7,7 +7,7 @@ from app.common.models import Report, Module, WorkOrder
 from app.admin.models import User
 from app.utils import get_prev_ref, get_users_list, save_images
 from app.common.datetime_format import get_today, format_datetime, format_time
-from .utils import create_wo_notification
+from .utils import create_wo_notification, save_wo
 
 from . import maintenance_bp
 
@@ -32,17 +32,18 @@ def work_orders():
     previous_url = get_prev_ref()
     nr = request.args.get("report")
     man = Module.query.filter_by(code="MAN").first()
-    
-    if nr:
-        priority_order = case(
-        
+    priority_order = case(
+            (WorkOrder.status != "Abierta", 5),
             (WorkOrder.priority_level == "Inmediata", 1),
             (WorkOrder.priority_level == "Alta", 2),
             (WorkOrder.priority_level == "Media", 3),
             (WorkOrder.priority_level == "Baja", 4),
-            else_=5 
+            
+            else_=6
         
         )
+    if nr:
+        
 
         work_orders = (
             WorkOrder.query
@@ -51,8 +52,8 @@ def work_orders():
             .all()
         )
     else:
-        work_orders = WorkOrder.query.order_by(WorkOrder.id.desc()).all()
-    
+        work_orders = WorkOrder.query.order_by(priority_order, WorkOrder.request_date.desc()).all()
+        
     
     return render_template("maintenance/work_orders.html",
                            title = title,
@@ -97,51 +98,24 @@ def work_order(wo_id=None):
         today = work_order.request_date
         
     if request.method == "POST":
-        date = request.form.get('date')
-        request_date = format_datetime(date)
-        activity = request.form.get("activity")
-        description = request.form.get('description')
-        responsible_id = request.form.get("responsible_id")
-        mod_id = int(request.form.get("mod_id"))
-        priority_level = request.form.get("priority_level")
-        assigned_personnel = request.form.get("assigned_personnel")
         
-        if work_order:
-            work_order.request_date = request_date
-            work_order.activity = activity
-            work_order.description = description
-            work_order.responsible_id = responsible_id
-            work_order.mod_id = mod_id
-            work_order.assigned_personnel_id = assigned_personnel
-            work_order.priority_level = priority_level
-            
-        else:
-            try:
-                work_order = WorkOrder(mod_id = int(mod_id) ,
-                                        request_date = request_date,
-                                        responsible_id = responsible_id,
-                                        activity = activity,
-                                        description = description,
-                                        assigned_personnel_id = assigned_personnel,
-                                        priority_level = priority_level)
-            except Exception as e:
-                flash(f"error mod_id {(type(mod_id), mod_id), (type(responsible_id), responsible_id)} , error:{e}")
-                return render_template("maintenance/work_order.html",
-                           title = title,
-                           previous_url = previous_url,
-                           work_order = work_order,
-                           users = users,
-                           today = today,
-                           mods = mods)
+        form = request.form
         try:
-            work_order.save()
-            create_wo_notification(user_id=assigned_personnel, wo_id=work_order.id)
+           
+            save_wo(work_order=work_order, form=form)
             flash("OT guardada correctamente", "success")
-        except:
-            flash("Algo salio mal con la OT", "danger")
             return redirect(url_for("maintenance.work_orders"))
-        
-        return redirect(url_for("maintenance.work_orders"))
+        except Exception as e:
+            flash("Ocurrió un error al intentar guardar la OT")
+            return render_template("maintenance/work_order.html",
+                        title = title,
+                        form = form,
+                        previous_url = previous_url,
+                        work_order = work_order,
+                        users = users,
+                        today = today,
+                        mods = mods)
+    
     
     return render_template("maintenance/work_order.html",
                            title = title,
@@ -199,9 +173,13 @@ def delete_work_order(wo_id):
     try:
         wo = WorkOrder.query.get_or_404(wo_id)
         wo.delete()
+
+        
         flash("Registro borrado exitosamente", "success")
-    except:
-        flash("No se puede eliminar el registro", "danger")
+    except Exception as e:
+        flash(f"No se puede eliminar el registro {e}", "danger")
+    
+    
             
     return redirect(url_for("maintenance.work_orders"))
 

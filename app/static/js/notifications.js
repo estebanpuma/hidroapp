@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
             li.setAttribute('id', `notification-${index}`);
             li.className = "list-group-item"
             if(notification.is_read !== true){
-                li.setAttribute("class", "list-group-item list-group-item-light");
+                li.setAttribute("class", "list-group-item list-group-item-secondary");
             }
             const a = document.createElement("a");
             
